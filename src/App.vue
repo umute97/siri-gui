@@ -1,7 +1,7 @@
 <template>
-  <div id="main">
+  <div id="app">
     <Header />
-    <main id="content">
+    <main>
       <router-view />
     </main>
   </div>
@@ -16,5 +16,15 @@ body {
   font-family: var(--font-family);
   font-size: 16px;
   padding: 10px;
+}
+
+#app {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
 }
 </style>
