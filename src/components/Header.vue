@@ -1,6 +1,6 @@
 <template>
   <header>
-      <img src="@/assets/logo-large.png" alt="SIRI - An iterative irradiation control suite.">
+      <router-link to="/"><img src="@/assets/logo-large.png" alt="SIRI - An iterative irradiation control suite." id="logo"/></router-link>
       <h1>SIRI - An iterative irradiation control suite.</h1>
   </header>
 </template>
@@ -15,11 +15,17 @@ header {
   border-bottom: 1px solid white;
 }
 
-header img {
+#logo {
   width: auto;
   height: auto;
   max-width: 60px;
   max-height: 60px;
+  transition: transform 0.2s ease-in-out;
+}
+
+#logo:hover {
+  cursor: pointer;
+  transform: scale(1.1);
 }
 
 header h1 {
