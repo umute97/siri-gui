@@ -3,7 +3,7 @@
         <header>
             <slot name="header"></slot>
         </header>
-        <section>
+        <section class="params">
             <slot name="parameters"></slot>
         </section>
         <section class="mc-controls">
@@ -11,7 +11,7 @@
             <button class="pause btn">Pause</button>
             <button class="stop btn">Stop</button>
         </section>
-        <section>
+        <section class="content">
             <slot name="content"></slot>
         </section>
     </article>
@@ -71,5 +71,20 @@ header {
 
 .stop {
     background: var(--red-500);
+}
+
+.params {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 0.5rem;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.content {
+    width: 100%;
+    flex: 1;
 }
 </style>
