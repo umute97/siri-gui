@@ -9,7 +9,7 @@
                 <input type="number" id="annealing-time" name="annealing-time" min="0" max="100" step="1" placeholder="duration (in min)">
             </template>
             <template #content>
-                <Line :options="chartOptions" :data="annealingData"></Line>
+                <Line :options="annealingOptions" :data="annealingData"></Line>
             </template>
         </MeasureCard>
         <MeasureCard>
@@ -19,7 +19,7 @@
             <template #parameters>
             </template>
             <template #content>
-                <Line :options="chartOptions" :data="ivData"></Line>
+                <Line :options="ivOptions" :data="ivData"></Line>
             </template>
         </MeasureCard>
         <MeasureCard>
@@ -78,8 +78,35 @@ const annealingData: Ref<ChartData> = ref({
     labels: [],
     datasets: [],
 });
-const chartOptions = reactive({
 
+const ivOptions = reactive({
+    scales: {
+        y: {
+            ticks: {
+                callback: (value: number) => value.toExponential(2),
+            },
+        },
+    },
+    plugins: {
+        legend: {
+            display: false,
+        },
+    },
+});
+
+const annealingOptions = reactive({
+    scales: {
+        y: {
+            ticks: {
+                callback: (value: number) => `${value * 100}%`,
+            },
+        },
+    },
+    plugins: {
+        legend: {
+            display: false,
+        },
+    },
 });
 
 const backendStatus : Ref<string | null> = ref(null);
@@ -141,8 +168,6 @@ onMounted(() => {
                 const annealingResponse : ResponseData = await getData("annealing");
                 ivData.value = makeChartStructure(ivResponse, "IV");
                 annealingData.value = makeChartStructure(annealingResponse, "Annealing");
-
-                console.log(ivData.value);
             }
 
         } catch (error) {

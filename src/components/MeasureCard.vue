@@ -26,7 +26,7 @@ article {
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    width: 500px;
+    flex: 1;
     height: 100%;
     border: 1px solid black;
     border-radius: 10px;
@@ -41,6 +41,7 @@ header {
     color: white;
     align-self: flex-start;
 }
+
 .mc-controls {
     width: 100%;
     display: flex;
