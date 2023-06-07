@@ -186,7 +186,6 @@ onUnmounted(() => {
 article {
     display: flex;
     justify-content: space-between;
-    height: 100%;
     padding: 1rem;
 }
 

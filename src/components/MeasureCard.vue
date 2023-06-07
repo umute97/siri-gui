@@ -27,7 +27,7 @@ article {
     justify-content: space-between;
     align-items: center;
     flex: 1;
-    height: 100%;
+    gap: 1rem;
     border: 1px solid black;
     border-radius: 10px;
     padding: 10px;
@@ -86,6 +86,5 @@ header {
 
 .content {
     width: 100%;
-    flex: 1;
 }
 </style>
