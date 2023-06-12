@@ -7,9 +7,9 @@
             <slot name="parameters"></slot>
         </section>
         <section class="mc-controls">
-            <button class="start btn" @click="$emit('start')">Start</button>
-            <button class="pause btn" @click="$emit('pause')">Pause</button>
-            <button class="stop btn" @click="$emit('stop')">Stop</button>
+            <button class="start btn" @click="$emit('start')" :disabled="!props.enabled">Start</button>
+            <button class="pause btn" @click="$emit('pause')" :disabled="!props.enabled">Pause</button>
+            <button class="stop btn" @click="$emit('stop')" :disabled="!props.enabled">Stop</button>
         </section>
         <section class="content">
             <slot name="content"></slot>
@@ -19,6 +19,12 @@
 
 <script setup lang="ts">
 defineEmits(['start', 'pause', 'stop']);
+const props = defineProps({
+    enabled: {
+        type: Boolean,
+        default: true,
+    },
+});
 </script>
 
 <style scoped>
@@ -61,6 +67,11 @@ header {
     color: var(--zinc);
     font-weight: 600;
     box-shadow: 5px 5px 5px 0 rgba(0, 0, 0, 0.4);
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 .start {
