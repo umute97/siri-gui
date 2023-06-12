@@ -149,10 +149,6 @@ const alibavaVStop: Ref<number> = ref(-900);
 const alibavaVStep: Ref<number> = ref(-100);
 const events: Ref<number> = ref(150000);
 
-const annealingFormErrors = reactive([]);
-const ivFormErrors = reactive([]);
-const alibavaFormErrors = reactive([]);
-
 // STATE
 const adresses = useAddressesStore();
 const backendStatus : Ref<string | null> = ref(null);
@@ -185,8 +181,9 @@ function packData(method: string, recipient: string, path: string, payload: obje
     };
 }
 
-function checkForm(errors: any, inputs: Array<Ref<number>>): boolean {
-    return true;
+function checkForm(inputs: Ref<number>[]): boolean {
+    // Very crude input validation
+    return inputs.every((input) => input.value !== null && input.value !== undefined);
 }
 
 function makeIVMeasDict(start: number, stop: number, step: number) {
@@ -299,17 +296,17 @@ async function startMeasurement(measurementType: string) {
     let measDict: object;
     switch(measurementType) {
         case "iv":
-            if (checkForm(ivFormErrors, [ivStart, ivStop, ivStep]))
+            if (checkForm([ivStart, ivStop, ivStep]))
                 return;
             measDict = makeIVMeasDict(ivStart.value, ivStop.value, ivStep.value);
             break;
         case "annealing":
-            if (checkForm(annealingFormErrors, [annealingTemperature, annealingDuration]))
+            if (checkForm([annealingTemperature, annealingDuration]))
                 return;
             measDict = makeAnnealingMeasDict(annealingTemperature.value, annealingDuration.value);
             break;
         case "alibava":
-            if(checkForm(alibavaFormErrors, [alibavaVStart, alibavaVStop, alibavaVStep, events]))
+            if(checkForm([alibavaVStart, alibavaVStop, alibavaVStep, events]))
                 return;
             measDict = makeAlibavaMeasDict(alibavaVStart.value, alibavaVStop.value, alibavaVStep.value, events.value);
             break;
