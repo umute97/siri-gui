@@ -67,7 +67,7 @@ header {
 }
 
 .pause {
-    background: var(--blue-500);
+    background: var(--yellow-500);
 }
 
 .stop {

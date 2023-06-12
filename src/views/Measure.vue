@@ -17,6 +17,9 @@
                 IV
             </template>
             <template #parameters>
+                <input type="number" id="iv-start" name="iv-start" min="-1000" max="1000" step="1" placeholder="start voltage (in V)">
+                <input type="number" id="iv-stop" name="iv-stop" min="-1000" max="1000" step="1" placeholder="stop voltage (in V)">
+                <input type="number" id="iv-step" name="iv-step" min="-1000" max="1000" step="1" placeholder="step voltage (in V)">
             </template>
             <template #content>
                 <Line :options="ivOptions" :data="ivData"></Line>
@@ -26,12 +29,22 @@
             <template #header>
                 Charge Collection
             </template>
+            <template #parameters>
+                <input type="number" id="iv-start" name="iv-start" min="-1000" max="1000" step="1" placeholder="start voltage (in V)">
+                <input type="number" id="iv-stop" name="iv-stop" min="-1000" max="1000" step="1" placeholder="stop voltage (in V)">
+                <input type="number" id="iv-step" name="iv-step" min="-1000" max="1000" step="1" placeholder="step voltage (in V)">
+                <input type="number" id="evt" name="evt" min="0" step="1000" placeholder="no. of events">
+            </template>
+            <template #content>
+                <ProgressBar :current-step="22" :max-steps="30" :height="'2rem'"></ProgressBar>
+            </template>
         </MeasureCard>
     </article>
 </template>
 
 <script setup lang="ts">
 import MeasureCard from '@/components/MeasureCard.vue';
+import ProgressBar from '@/components/ProgressBar.vue';
 import { defineComponent, onMounted, onUnmounted, reactive, ref, type Ref } from 'vue';
 import axios from 'axios';
 import {
@@ -66,6 +79,7 @@ interface ResponseData {
 defineComponent({
     components: {
         MeasureCard,
+        ProgressBar,
         Line,
     }
 });
@@ -194,12 +208,21 @@ label {
 }
 
 input {
+    font: inherit;
     width: 100%;
     font-size: 1.1rem;
     padding: 0.5rem;
-    border-radius: 5px;
-    border: 1px solid white;
+    padding-left: 0;
+    border: none;
+    border-bottom: 1px solid white;
     background: var(--zinc);
     color: white;
+    margin: 0 1rem;
+    transition: all 0.2s ease-in-out;
+}
+
+input:focus {
+    outline: none;
+    border-bottom: 1px solid var(--primary-color);
 }
 </style>
