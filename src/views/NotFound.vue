@@ -8,7 +8,7 @@
     </article>
 </template>
 
-<style>
+<style scoped>
 article {
     display: grid;
     place-items: center;
