@@ -1,4 +1,3 @@
-import path from 'path'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
@@ -13,6 +12,11 @@ const router = createRouter({
       path: '/measure',
       name: 'Measure',
       component: () => import('../views/Measure.vue')
+    },
+    {
+      path: '/settings',
+      name: 'Settings',
+      component: () => import('../views/Settings.vue')
     },
     {
       path: '/:pathMatch(.*)*',

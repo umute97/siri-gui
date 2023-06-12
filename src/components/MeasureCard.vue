@@ -18,6 +18,7 @@
 </template>
 
 <script setup lang="ts">
+defineEmits(['start', 'pause', 'stop']);
 </script>
 
 <style scoped>
