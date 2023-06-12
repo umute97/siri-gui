@@ -7,9 +7,9 @@
             <slot name="parameters"></slot>
         </section>
         <section class="mc-controls">
-            <button class="start btn">Start</button>
-            <button class="pause btn">Pause</button>
-            <button class="stop btn">Stop</button>
+            <button class="start btn" @click="$emit('start')">Start</button>
+            <button class="pause btn" @click="$emit('pause')">Pause</button>
+            <button class="stop btn" @click="$emit('stop')">Stop</button>
         </section>
         <section class="content">
             <slot name="content"></slot>
