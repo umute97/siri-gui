@@ -45,6 +45,7 @@
 <script setup lang="ts">
 import MeasureCard from '@/components/MeasureCard.vue';
 import ProgressBar from '@/components/ProgressBar.vue';
+import { useAddressesStore } from '@/stores/addresses';
 import { defineComponent, onMounted, onUnmounted, reactive, ref, type Ref } from 'vue';
 import axios from 'axios';
 import {
@@ -123,12 +124,10 @@ const annealingOptions = reactive({
     },
 });
 
+const adresses = useAddressesStore();
 const backendStatus : Ref<string | null> = ref(null);
 const measurementRunning : Ref<boolean> = ref(false);
 let backendStatusTimer: number = -1;
-
-const host = "192.168.13.16";
-const gatewayport = "5555";
 
 const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color');
 const zinc = getComputedStyle(document.documentElement).getPropertyValue('--zinc');
@@ -145,7 +144,7 @@ function packData(method: string, recipient: string, path: string, payload: any)
 async function getData(measurementType: string): Promise<ResponseData> {
     const data = packData("get", "liveplot", `/measurements/${measurementType}`, null);
     try {
-        const response = await axios.post(`http://${host}:${gatewayport}/`, data);
+        const response = await axios.post(`http://${adresses.getFullGatewayAddress()}/`, data);
         return response.data;
     } catch (error) {
         console.log(error);
@@ -173,7 +172,7 @@ onMounted(() => {
     backendStatusTimer = setInterval(async () => {
         const data = packData("get", "supervisor", "/control", null);
         try {
-            const response = await axios.post(`http://${host}:${gatewayport}/`, data);
+            const response = await axios.post(`http://${adresses.getFullGatewayAddress()}/`, data);
             backendStatus.value = response.data.state;
             measurementRunning.value = backendStatus.value != "idle";
 
@@ -209,8 +208,7 @@ label {
 
 input {
     font: inherit;
-    width: 100%;
-    font-size: 1.1rem;
+    width: 60%;
     padding: 0.5rem;
     padding-left: 0;
     border: none;
