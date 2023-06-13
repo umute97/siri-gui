@@ -5,7 +5,7 @@
             <FlagIcon class="w-6 h-6" v-else/>
             <figcaption>{{ label }}</figcaption>
         </figure>
-        <input type="text" v-model="networkInput"/>
+        <input type="text" v-model="addressesStore[props.network as keyof typeof addressesStore]"/>
     </div>
 </template>
 <script setup lang="ts">
@@ -22,7 +22,6 @@ const props = defineProps({
         required: true,
     },
     network: {
-        type: String,
         required: true,
     },
 })
@@ -34,8 +33,6 @@ defineComponent({
     },
 });
 const addressesStore = useAddressesStore();
-const networkInput = ref(addressesStore[props.network as keyof typeof addressesStore]);
-
 const nodeClass = props.networkType === 'host' ? 'host-node' : 'port-node';
 </script>
 <style scoped>
