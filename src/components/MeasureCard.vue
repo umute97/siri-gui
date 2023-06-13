@@ -32,9 +32,8 @@ article {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
     flex: 1;
-    gap: 1rem;
+    gap: 2rem;
     border: 1px solid black;
     border-radius: 10px;
     padding: 10px;
@@ -93,7 +92,6 @@ header {
     gap: 0.5rem;
     width: 100%;
     align-items: center;
-    justify-content: space-between;
 }
 
 .content {
