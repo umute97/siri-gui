@@ -139,7 +139,16 @@ const ivOptions = reactive({
             ticks: {
                 callback: (value: number) => value.toExponential(2),
             },
+            title: {
+                display: true,
+                text: 'current (A)',
+            },
         },
+        x: {
+            title: {
+                display: true,
+                text: 'voltage (V)',}
+        }
     },
     plugins: {
         legend: {
@@ -152,7 +161,23 @@ const annealingOptions = reactive({
     scales: {
         y: {
             ticks: {
-                callback: (value: number) => `${value * 100}%`,
+                callback: (value: number) => {
+                    const fixedValue = (value * 100).toFixed(1);
+                    return `${fixedValue}`
+                }
+            },
+            title: {
+                display: true,
+                text: 'progress (%)',
+            },
+        },
+        x: {
+            ticks: {
+                callback: (value: number) => value.toFixed(0),
+            },
+            title: {
+                display: true,
+                text: 'time (s)',
             },
         },
     },
