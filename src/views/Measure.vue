@@ -1,27 +1,41 @@
 <template>
-    <article>
+    <article class="measure-article">
         <MeasureCard @start="startMeasurement('annealing')" @pause="controlRun('pause')" @stop="controlRun('stop')"
             :enabled="enabledAnnealingControls">
             <template #header>
                 <div id="annealing-header">Annealing</div>
             </template>
             <template #parameters>
-                <input v-model.number="annealingTemperature" min="0" max="60" step="1" placeholder="temperature (in C°)">
-                <input v-model.number="annealingDuration" min="0" max="100" step="1" placeholder="duration (in min)">
+                <form>
+                    <label for="annealing-temperature">Temperature</label>
+                    <input name="annealing-temperature" v-model.number="annealingTemperature" min="0" max="60" step="1"
+                        placeholder="temperature (in C°)">
+                    <label for="annealing-duration">Duration</label>
+                    <input name="annealing-duration" v-model.number="annealingDuration" min="0" max="100" step="1"
+                        placeholder="duration (in min)">
+                </form>
             </template>
             <template #content>
                 <Line :options="annealingOptions" :data="annealingData"></Line>
             </template>
         </MeasureCard>
         <MeasureCard @start="startMeasurement('iv')" @pause="controlRun('pause')" @stop="controlRun('stop')"
-            :enabled="false">
+            :enabled="enabledIVControls">
             <template #header>
                 <div id="iv-header">IV</div>
             </template>
             <template #parameters>
-                <input v-model.number="ivStart" min="-1000" max="1000" step="1" placeholder="start voltage (in V)">
-                <input v-model.number="ivStop" min="-1000" max="1000" step="1" placeholder="stop voltage (in V)">
-                <input v-model.number="ivStep" min="-1000" max="1000" step="1" placeholder="step voltage (in V)">
+                <form>
+                    <label for="iv-voltage-start">Start Voltage</label>
+                    <input name="iv-voltage-start" v-model.number="ivStart" min="-1000" max="1000" step="1"
+                        placeholder="start voltage (in V)">
+                    <label for="iv-voltage-stop">Stop Voltage</label>
+                    <input name="iv-voltage-stop" v-model.number="ivStop" min="-1000" max="1000" step="1"
+                        placeholder="stop voltage (in V)">
+                    <label for="iv-voltage-step">Voltage Step</label>
+                    <input name="iv-voltage-step" v-model.number="ivStep" min="-1000" max="1000" step="1"
+                        placeholder="step voltage (in V)">
+                </form>
             </template>
             <template #content>
                 <Line :options="ivOptions" :data="ivData"></Line>
@@ -33,21 +47,34 @@
                 <div id="alibava-header">Charge Collection</div>
             </template>
             <template #parameters>
-                <input v-model.number="alibavaVStart" min="-1000" max="1000" step="1" placeholder="start voltage (in V)">
-                <input v-model.number="alibavaVStop" min="-1000" max="1000" step="1" placeholder="stop voltage (in V)">
-                <input v-model.number="alibavaVStep" min="-1000" max="1000" step="1" placeholder="step voltage (in V)">
-                <input v-model.number="events" min="0" step="1000" placeholder="no. of events">
+                <form>
+                    <label for="alibava-voltage-start">Start Voltage</label>
+                    <input name="alibava-voltage-start" v-model.number="alibavaVStart" min="-1000" max="1000" step="1"
+                        placeholder="start voltage (in V)">
+                    <label for="alibava-voltage-stop">Stop Voltage</label>
+                    <input name="alibava-voltage-stop" v-model.number="alibavaVStop" min="-1000" max="1000" step="1"
+                        placeholder="stop voltage (in V)">
+                    <label for="alibava-voltage-step">Voltage Step</label>
+                    <input name="alibava-voltage-step" v-model.number="alibavaVStep" min="-1000" max="1000" step="1"
+                        placeholder="step voltage (in V)">
+                    <label for="alibava-events">No. of events</label>
+                    <input name="alibava-events" v-model.number="events" min="0" step="1000" placeholder="no. of events">
+                </form>
             </template>
             <template #content>
-                <ProgressBar :current-step="22" :max-steps="30" :height="'2rem'"></ProgressBar>
+                <div class="progressbar-wrapper">
+                    <ProgressBar :current-step="22" :max-steps="30" :height="'2rem'"></ProgressBar>
+                </div>
             </template>
         </MeasureCard>
     </article>
+    <ClearListHoverButton />
 </template>
 
 <script setup lang="ts">
 import MeasureCard from '@/components/MeasureCard.vue';
 import ProgressBar from '@/components/ProgressBar.vue';
+import ClearListHoverButton from '@/components/ClearListHoverButton.vue';
 import { useAddressesStore } from '@/stores/addresses';
 import { computed, defineComponent, onMounted, onUnmounted, reactive, ref, type Ref } from 'vue';
 import axios from 'axios';
@@ -92,6 +119,7 @@ defineComponent({
         MeasureCard,
         ProgressBar,
         Line,
+        ClearListHoverButton,
     }
 });
 
@@ -155,13 +183,37 @@ const measurementRunning: Ref<boolean> = ref(false);
 let backendStatusTimer: number = -1;
 
 const enabledIVControls = computed(() => {
-    return currentMeasurement === 'IV' && measurementRunning.value;
+    if (measurementRunning.value) {
+        if (currentMeasurement === 'IV') {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return true;
+    }
 });
 const enabledAnnealingControls = computed(() => {
-    return currentMeasurement === 'Annealing' && measurementRunning.value;
+    if (measurementRunning.value) {
+        if (currentMeasurement === 'Annealing') {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return true;
+    }
 });
 const enabledAlibavaControls = computed(() => {
-    return currentMeasurement === 'FullRun' && measurementRunning.value;
+    if (measurementRunning.value) {
+        if (currentMeasurement === 'FullRun') {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return true;
+    }
 });
 
 // STYLES + COMPONENTS
@@ -190,7 +242,12 @@ function packData(method: string, recipient: string, path: string, payload: obje
 
 function checkForm(inputs: Ref<number>[]): boolean {
     // Very crude input validation
-    return inputs.every((input) => input.value !== null && input.value !== undefined);
+    for (const input of inputs) {
+        if (input.value === null || input.value === undefined || typeof input.value !== 'number') {
+            return false;
+        }
+    }
+    return true
 }
 
 function makeIVMeasDict(start: number, stop: number, step: number) {
@@ -273,8 +330,7 @@ function makeChartStructure(data: ResponseData, label: string): ChartData {
 
 // MC INTERFACING FUNCTIONS
 async function controlRun(command: "run" | "start" | "pause" | "stop") {
-    console.log(command);
-    command = "start" ? "run" : command;
+    command = command === "start" ? "run" : command;
     const payload: PayloadObject = { state: command };
     if (command !== "pause")
         payload.measurement_index = 0;
@@ -304,23 +360,26 @@ async function startMeasurement(measurementType: string) {
     let measDict: object;
     switch (measurementType) {
         case "iv":
-            if (checkForm([ivStart, ivStop, ivStep]))
+            if (!checkForm([ivStart, ivStop, ivStep]))
                 return;
             measDict = makeIVMeasDict(ivStart.value, ivStop.value, ivStep.value);
             break;
         case "annealing":
-            if (checkForm([annealingTemperature, annealingDuration]))
+            if (!checkForm([annealingTemperature, annealingDuration]))
                 return;
             measDict = makeAnnealingMeasDict(annealingTemperature.value, annealingDuration.value);
             break;
         case "alibava":
-            if (checkForm([alibavaVStart, alibavaVStop, alibavaVStep, events]))
+            if (!checkForm([alibavaVStart, alibavaVStop, alibavaVStep, events]))
                 return;
             measDict = makeAlibavaMeasDict(alibavaVStart.value, alibavaVStop.value, alibavaVStep.value, events.value);
             break;
         default:
+            console.log("Unknown measurement type");
             return;
     }
+    console.log(measDict);
+
     const payload = packData("post", "measurement", "/measurements", measDict);
     try {
         await axios.post(`http://${adresses.getFullGatewayAddress}/`, payload);
@@ -363,7 +422,7 @@ onMounted(() => {
         } catch (error) {
             console.log(error);
         }
-    }, 10000);
+    }, 1000);
 });
 
 onUnmounted(() => {
@@ -373,19 +432,31 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-article {
+.measure-article {
     display: flex;
     justify-content: space-between;
     padding: 1rem;
 }
 
 label {
-    margin-right: 0.5rem;
+    align-self: flex-start;
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--primary-color);
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 60%;
 }
 
 input {
     font: inherit;
-    width: 60%;
+    width: 100%;
     padding: 0.5rem;
     padding-left: 0;
     border: none;
@@ -409,4 +480,9 @@ input:focus {
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-}</style>
+}
+
+.progressbar-wrapper {
+    flex: 1;
+}
+</style>

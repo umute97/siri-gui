@@ -31,8 +31,8 @@ const props = defineProps({
 article {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
     flex: 1;
     gap: 1rem;
     border: 1px solid black;
