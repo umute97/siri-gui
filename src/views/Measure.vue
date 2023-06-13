@@ -147,7 +147,8 @@ const ivOptions = reactive({
         x: {
             title: {
                 display: true,
-                text: 'voltage (V)',}
+                text: 'voltage (V)',
+            }
         }
     },
     plugins: {
