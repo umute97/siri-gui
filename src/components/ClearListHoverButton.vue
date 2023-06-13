@@ -2,14 +2,19 @@
     <button @click="clearList">
         <FireIcon class="w-6 h-6"/>
         <div class="tooltip">Clear measurement list</div>
+        <div class="list-length">{{ listLength }}</div>
     </button>
 </template>
 <script setup lang="ts">
 import { useAddressesStore } from '@/stores/addresses';
 import { FireIcon } from '@heroicons/vue/24/outline';
 import axios from 'axios';
+import { onMounted, ref } from 'vue';
 
 const addresses = useAddressesStore();
+
+const listLength = ref(0);
+let listLengthInterval: number = 0;
 
 function packData(method: string, recipient: string, path: string, payload: object | null) {
     return {
@@ -27,6 +32,21 @@ async function clearList() {
         console.error(error);
     }
 }
+
+async function getListLength() {
+    const payload = packData('get', 'supervisor', '/measurements/length', null);
+    try {
+        const response = await axios.post(`http://${addresses.getFullGatewayAddress}`, payload);
+        listLength.value = response.data.measurements;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+onMounted(() => {
+    listLengthInterval = setInterval(getListLength, 1000);
+});
+
 </script>
 <style>
 button {
@@ -65,5 +85,15 @@ button:hover .tooltip {
     bottom: 105%;
     border-radius: 8px;
     box-shadow: 5px 5px 10px 0 rgba(0, 0, 0, 0.8);
+}
+
+.list-length {
+    position: absolute;
+    display: inline-block;
+    border-radius: 8px;
+    padding: 0.3rem 0.5rem;
+    top: 90%;
+    background: var(--primary-color);
+    box-shadow: inherit;
 }
 </style>
