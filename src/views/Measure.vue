@@ -69,12 +69,14 @@
         </MeasureCard>
     </article>
     <ClearListHoverButton />
+    <HoverHeader />
 </template>
 
 <script setup lang="ts">
 import MeasureCard from '@/components/MeasureCard.vue';
 import ProgressBar from '@/components/ProgressBar.vue';
 import ClearListHoverButton from '@/components/ClearListHoverButton.vue';
+import HoverHeader from '@/components/HoverHeader.vue';
 import { useAddressesStore } from '@/stores/stores';
 import { computed, defineComponent, onMounted, onUnmounted, reactive, ref, type Ref } from 'vue';
 import axios from 'axios';
@@ -120,6 +122,7 @@ defineComponent({
         ProgressBar,
         Line,
         ClearListHoverButton,
+        HoverHeader,
     }
 });
 

@@ -1,9 +1,15 @@
 import { defineStore } from 'pinia';
 
+interface Header {
+    operator: string,
+    project: string,
+    name: string,
+}
+
 export const useAddressesStore = defineStore({
     id: 'addresses',
     state: () => ({
-        backendBaseIP: 'http://localhost',
+        backendBaseIP: '192.168.13.16',
         gatewayPort: '5555',
     }),
     getters: {
@@ -24,7 +30,7 @@ export const useHeaderStore = defineStore({
         getFormattedHeader(): string {
             return `${this.operator} measuring: ${this.name} of ${this.project}`;
         },
-        getHeader(): object {
+        getHeader(): Header {
             return {
                 operator: this.operator,
                 project: this.project,
