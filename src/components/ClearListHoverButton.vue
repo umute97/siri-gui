@@ -2,18 +2,18 @@
     <button @click="clearList">
         <FireIcon class="w-6 h-6"/>
         <div class="tooltip">Clear measurement list</div>
-        <div class="list-length">{{ listLength }}</div>
+        <div class="list-length">{{ measurementStore.max_measurement_index }}</div>
     </button>
 </template>
 <script setup lang="ts">
-import { useAddressesStore } from '@/stores/stores';
+import { useAddressesStore, useMeasurementStore } from '@/stores/stores';
 import { FireIcon } from '@heroicons/vue/24/outline';
 import axios from 'axios';
-import { onMounted, ref } from 'vue';
+import { onMounted, onUnmounted } from 'vue';
 
 const addresses = useAddressesStore();
+const measurementStore = useMeasurementStore();
 
-const listLength = ref(0);
 let listLengthInterval: number = 0;
 
 function packData(method: string, recipient: string, path: string, payload: object | null) {
@@ -37,7 +37,7 @@ async function getListLength() {
     const payload = packData('get', 'supervisor', '/measurements/length', null);
     try {
         const response = await axios.post(`http://${addresses.getFullGatewayAddress}`, payload);
-        listLength.value = response.data.measurements;
+        measurementStore.max_measurement_index = response.data.measurements;
     } catch (error) {
         console.error(error);
     }
@@ -45,6 +45,10 @@ async function getListLength() {
 
 onMounted(() => {
     listLengthInterval = setInterval(getListLength, 1000);
+});
+
+onUnmounted(() => {
+    clearInterval(listLengthInterval);
 });
 
 </script>

@@ -6,6 +6,8 @@ interface Header {
     name: string,
 }
 
+type Measurement = "Annealing" | "IV" | "FullRun" | null;
+
 export const useAddressesStore = defineStore({
     id: 'addresses',
     state: () => ({
@@ -43,6 +45,30 @@ export const useHeaderStore = defineStore({
             this.operator = operator;
             this.project = project;
             this.name = name;
+        },
+    },
+});
+
+export const useMeasurementStore = defineStore({
+    id: 'measurement',
+    state: () => ({
+        current_measurement_index: 0,
+        max_measurement_index: 0,
+        measurement_running: false,
+        current_measurement: 'IV' as Measurement,
+    }),
+    actions: {
+        setCurrentMeasurementIndex(index: number): void {
+            this.current_measurement_index = index;
+        },
+        setMaxMeasurementIndex(index: number): void {
+            this.max_measurement_index = index;
+        },
+        setMeasurementRunning(running: boolean): void {
+            this.measurement_running = running;
+        },
+        setCurrentMeasurement(measurement: Measurement): void {
+            this.current_measurement = measurement;
         },
     },
 });

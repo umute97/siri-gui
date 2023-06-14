@@ -63,7 +63,7 @@
             </template>
             <template #content>
                 <div class="progressbar-wrapper">
-                    <ProgressBar :current-step="22" :max-steps="30" :height="'2rem'"></ProgressBar>
+                    <ProgressBar :current-step="measurementStore.current_measurement_index" :max-steps="measurementStore.max_measurement_index" :height="'2rem'"></ProgressBar>
                 </div>
             </template>
         </MeasureCard>
@@ -77,7 +77,7 @@ import MeasureCard from '@/components/MeasureCard.vue';
 import ProgressBar from '@/components/ProgressBar.vue';
 import ClearListHoverButton from '@/components/ClearListHoverButton.vue';
 import HoverHeader from '@/components/HoverHeader.vue';
-import { useAddressesStore } from '@/stores/stores';
+import { useAddressesStore, useMeasurementStore } from '@/stores/stores';
 import { computed, defineComponent, onMounted, onUnmounted, reactive, ref, type Ref } from 'vue';
 import axios from 'axios';
 import {
@@ -205,15 +205,14 @@ const events: Ref<number> = ref(150000);
 
 // STATE
 const adresses = useAddressesStore();
+const measurementStore = useMeasurementStore();
 const backendStatus: Ref<string | null> = ref(null);
-let currentMeasurement: Measurement = null;
 let lastCheckedMeasurement: Measurement = null;
-const measurementRunning: Ref<boolean> = ref(false);
 let backendStatusTimer: number = -1;
 
 const enabledIVControls = computed(() => {
-    if (measurementRunning.value) {
-        if (currentMeasurement === 'IV') {
+    if (measurementStore.measurement_running) {
+        if (measurementStore.current_measurement === 'IV') {
             return true;
         } else {
             return false;
@@ -223,8 +222,8 @@ const enabledIVControls = computed(() => {
     }
 });
 const enabledAnnealingControls = computed(() => {
-    if (measurementRunning.value) {
-        if (currentMeasurement === 'Annealing') {
+    if (measurementStore.measurement_running) {
+        if (measurementStore.current_measurement === 'Annealing') {
             return true;
         } else {
             return false;
@@ -234,8 +233,8 @@ const enabledAnnealingControls = computed(() => {
     }
 });
 const enabledAlibavaControls = computed(() => {
-    if (measurementRunning.value) {
-        if (currentMeasurement === 'FullRun') {
+    if (measurementStore.measurement_running) {
+        if (measurementStore.current_measurement === 'FullRun') {
             return true;
         } else {
             return false;
@@ -407,7 +406,6 @@ async function startMeasurement(measurementType: string) {
             console.log("Unknown measurement type");
             return;
     }
-    console.log(measDict);
 
     const payload = packData("post", "measurement", "/measurements", measDict);
     try {
@@ -415,6 +413,7 @@ async function startMeasurement(measurementType: string) {
     } catch (error) {
         console.log(error);
     }
+
     controlRun("start");
 }
 
@@ -425,7 +424,7 @@ onMounted(() => {
         try {
             const response = await axios.post(`http://${adresses.getFullGatewayAddress}/`, data);
             if (response.data)
-                currentMeasurement = Object.keys(response.data)[0] as Measurement;
+                measurementStore.setCurrentMeasurement(Object.keys(response.data)[0] as Measurement);
         } catch (error) {
             console.log(error);
         }
@@ -434,13 +433,14 @@ onMounted(() => {
         try {
             const response = await axios.post(`http://${adresses.getFullGatewayAddress}/`, data);
             backendStatus.value = response.data.state;
-            measurementRunning.value = backendStatus.value != "idle";
+            measurementStore.setCurrentMeasurementIndex(response.data.measurement_index);
+            measurementStore.setMeasurementRunning(backendStatus.value != "idle");
 
-            if (measurementRunning.value) {
-                if (lastCheckedMeasurement !== currentMeasurement) {
-                    lastCheckedMeasurement = currentMeasurement;
-                    if (currentMeasurement)
-                        headers[currentMeasurement]!.classList.add("active");
+            if (measurementStore.measurement_running) {
+                if (lastCheckedMeasurement !== measurementStore.current_measurement) {
+                    lastCheckedMeasurement = measurementStore.current_measurement;
+                    if (measurementStore.current_measurement)
+                        headers[measurementStore.current_measurement]!.classList.add("active");
                 }
                 const ivResponse: ResponseData = await getData("iv");
                 const annealingResponse: ResponseData = await getData("annealing");
