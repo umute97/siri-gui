@@ -8,11 +8,11 @@
         <section class="mc-header-section">
             <form @submit.prevent="validateHeader">
                 <label for="operator">Operator</label>
-                <input type="text" name="operator" v-model="header.operator"/>
+                <input type="text" name="operator" v-model="header.operator" />
                 <label for="project">Project</label>
-                <input type="text" name="project" v-model="header.project"/>
+                <input type="text" name="project" v-model="header.project" />
                 <label for="sensor">Sensor</label>
-                <input type="text" name="sensor" v-model="header.name"/>
+                <input type="text" name="sensor" v-model="header.name" />
                 <input type="submit" value="Set header">
             </form>
         </section>
@@ -22,6 +22,13 @@
 import IPNode from '@/components/IPNode.vue';
 import { useAddressesStore, useHeaderStore } from '@/stores/stores';
 import axios from 'axios';
+import { onMounted } from 'vue';
+
+interface Header {
+    operator: string;
+    project: string;
+    name: string;
+}
 
 const backendNode = {
     label: 'The Backend',
@@ -39,6 +46,7 @@ const portNodes = [
 const addresses = useAddressesStore();
 const header = useHeaderStore();
 
+// TODO: Move to utils
 function packData(method: string, recipient: string, path: string, payload: object | null) {
     return {
         method,
@@ -48,12 +56,34 @@ function packData(method: string, recipient: string, path: string, payload: obje
     };
 }
 
+// TODO: Move to utils, make generic
+function pick(obj: object, ...props: any[]): Header {
+    return props.reduce((result, prop) => {
+        if (obj.hasOwnProperty(prop)) {
+            result[prop] = obj[prop as keyof typeof obj];
+        }
+        return result;
+    }, {})
+
+}
+
 function submitHeader() {
     const headerPayload = packData("post", "storage", "/data", header.getHeader);
     try {
         axios.post(`http://${addresses.getFullGatewayAddress}`, headerPayload);
     } catch (error) {
         console.error(error);
+    }
+}
+
+async function requestHeader(): Promise<Header> {
+    const headerPayload = packData("get", "storage", "/data", null);
+    try {
+        const response = await axios.post(`http://${addresses.getFullGatewayAddress}`, headerPayload);
+        return pick(response.data, 'operator', 'project', 'name');
+    } catch (error) {
+        console.error(error);
+        return { operator: '', project: '', name: '' };
     }
 }
 
@@ -66,6 +96,12 @@ function validateHeader() {
     }
     submitHeader();
 }
+
+onMounted(async () => {
+    const {operator, project, name} = await requestHeader();
+    header.setHeader(operator, project, name);
+
+});
 </script>
 <style scoped>
 .settings-page {
@@ -87,6 +123,7 @@ function validateHeader() {
     border-radius: 8px;
     padding: 1rem;
 }
+
 .mc-header-section form label {
     margin-top: 1rem;
     font-size: 0.8rem;
@@ -123,6 +160,7 @@ function validateHeader() {
     outline: none;
     border-bottom: 1px solid var(--primary-color);
 }
+
 .network-section {
     flex: 1;
     position: relative;

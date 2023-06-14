@@ -32,4 +32,11 @@ export const useHeaderStore = defineStore({
             };
         }
     },
+    actions: {
+        setHeader(operator: string, project: string, name: string): void {
+            this.operator = operator;
+            this.project = project;
+            this.name = name;
+        },
+    },
 });
