@@ -6,6 +6,11 @@ interface Header {
     name: string,
 }
 
+export interface StableStatus {
+    stable_time: number,
+    is_stable: boolean,
+}
+
 type Measurement = "Annealing" | "IV" | "FullRun";
 
 export const useAddressesStore = defineStore({
@@ -71,4 +76,31 @@ export const useMeasurementStore = defineStore({
             this.current_measurement = measurement;
         },
     },
+});
+
+export const useTemperatureStore = defineStore({
+    id: 'temperature',
+    state: () => ({
+        stable_status: {} as StableStatus,
+        temperatures: [] as number[],
+    }),
+    getters: {
+        getStableTimer(): number {
+            return this.stable_status['stable_time'];
+        },
+        getIsStable(): boolean {
+            return this.stable_status['is_stable'];
+        },
+    },
+    actions: {
+        getChannelTemperature(channel: number): number {
+            return this.temperatures[channel];
+        },
+        setStableStatus(stable_status: StableStatus): void {
+            this.stable_status = stable_status;
+        },
+        setTemperatures(temperatures: number[]): void {
+            this.temperatures = temperatures;
+        }
+    }
 });
