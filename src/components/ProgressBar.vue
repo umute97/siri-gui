@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <div :style="barStyle">
-            <div class="progress">{{ progress.toFixed(0) }}% (step {{currentStep}}/{{maxSteps}})</div>
+            <div class="progress">{{ progress.toFixed(0) }}%</div>
         </div>
     </div>
 </template>
@@ -35,6 +35,7 @@ const progress = computed(() => {
 
 const barStyle = computed(() => {
     return {
+        overflow: 'hidden',
         width: `${progress.value}%`,
         height: props.height,
         background: `linear-gradient(to right, ${darkGreen} 0%, ${primary} 100%)`,
@@ -51,6 +52,7 @@ const barStyle = computed(() => {
 }
 
 .progress {
+    white-space: nowrap;
     display: flex;
     justify-content: center;
     align-items: center;
