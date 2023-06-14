@@ -8,11 +8,11 @@
         <section class="mc-header-section">
             <form @submit.prevent="validateHeader">
                 <label for="operator">Operator</label>
-                <input type="text" name="operator" v-model="headerForm.operator"/>
+                <input type="text" name="operator" v-model="header.operator"/>
                 <label for="project">Project</label>
-                <input type="text" name="project" v-model="headerForm.project"/>
+                <input type="text" name="project" v-model="header.project"/>
                 <label for="sensor">Sensor</label>
-                <input type="text" name="sensor" v-model="headerForm.name"/>
+                <input type="text" name="sensor" v-model="header.name"/>
                 <input type="submit" value="Set header">
             </form>
         </section>
@@ -20,8 +20,7 @@
 </template>
 <script setup lang="ts">
 import IPNode from '@/components/IPNode.vue';
-import { useAddressesStore } from '@/stores/stores';
-import { reactive } from 'vue';
+import { useAddressesStore, useHeaderStore } from '@/stores/stores';
 import axios from 'axios';
 
 const backendNode = {
@@ -37,13 +36,8 @@ const portNodes = [
     },
 ]
 
-const headerForm = reactive({
-    operator: '',
-    project: '',
-    name: '',
-});
-
 const addresses = useAddressesStore();
+const header = useHeaderStore();
 
 function packData(method: string, recipient: string, path: string, payload: object | null) {
     return {
@@ -55,16 +49,16 @@ function packData(method: string, recipient: string, path: string, payload: obje
 }
 
 function submitHeader() {
-    const header = packData("post", "storage", "/data", headerForm);
+    const headerPayload = packData("post", "storage", "/data", header.getHeader);
     try {
-        axios.post(`http://${addresses.getFullGatewayAddress}`, header);
+        axios.post(`http://${addresses.getFullGatewayAddress}`, headerPayload);
     } catch (error) {
         console.error(error);
     }
 }
 
 function validateHeader() {
-    for (const [key, value] of Object.entries(headerForm)) {
+    for (const [key, value] of Object.entries(header.getHeader)) {
         if (!value) {
             alert(`Please fill in ${key}`);
             return;

@@ -12,3 +12,24 @@ export const useAddressesStore = defineStore({
         },
     },
 });
+
+export const useHeaderStore = defineStore({
+    id: 'header',
+    state: () => ({
+        operator: '',
+        project: '',
+        name: '',
+    }),
+    getters: {
+        getFormattedHeader(): string {
+            return `${this.operator} measuring: ${this.name} of ${this.project}`;
+        },
+        getHeader(): object {
+            return {
+                operator: this.operator,
+                project: this.project,
+                name: this.name,
+            };
+        }
+    },
+});
