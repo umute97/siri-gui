@@ -114,7 +114,9 @@ interface PayloadObject {
     measurement_index?: number;
 };
 
-type Measurement = "Annealing" | "IV" | "FullRun" | null;
+type Measurement = "Annealing" | "IV" | "FullRun";
+type HeaderCollection = { [key in Measurement]: HTMLDivElement;};
+
 
 defineComponent({
     components: {
@@ -207,7 +209,7 @@ const events: Ref<number> = ref(150000);
 const adresses = useAddressesStore();
 const measurementStore = useMeasurementStore();
 const backendStatus: Ref<string | null> = ref(null);
-let lastCheckedMeasurement: Measurement = null;
+let lastCheckedMeasurement: Measurement;
 let backendStatusTimer: number = -1;
 
 const enabledIVControls = computed(() => {
@@ -248,15 +250,11 @@ const enabledAlibavaControls = computed(() => {
 const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color');
 const zinc = getComputedStyle(document.documentElement).getPropertyValue('--zinc');
 
-const annealingHeader = document.getElementById('annealing-header');
-const ivHeader = document.getElementById('iv-header');
-const alibavaHeader = document.getElementById('alibava-header');
+let annealingHeader: HTMLDivElement;
+let ivHeader: HTMLDivElement;
+let alibavaHeader: HTMLDivElement;
 
-const headers = {
-    Annealing: annealingHeader,
-    IV: ivHeader,
-    FullRun: alibavaHeader,
-};
+let headers: HeaderCollection;
 
 // HELPER FUNCTIONS
 function packData(method: string, recipient: string, path: string, payload: object | null) {
@@ -419,6 +417,12 @@ async function startMeasurement(measurementType: string) {
 
 // LIFECYCLE HOOKS
 onMounted(() => {
+    // Get header divs
+    annealingHeader = document.getElementById('annealing-header') as HTMLDivElement;
+    ivHeader = document.getElementById('iv-header') as HTMLDivElement;
+    alibavaHeader = document.getElementById('alibava-header') as HTMLDivElement;
+    headers = {'Annealing': annealingHeader, 'IV': ivHeader, 'FullRun': alibavaHeader};
+
     backendStatusTimer = setInterval(async () => {
         let data = packData("get", "measurement", "/measurement_dict", null);
         try {
@@ -437,15 +441,14 @@ onMounted(() => {
             measurementStore.setMeasurementRunning(backendStatus.value != "idle");
 
             if (measurementStore.measurement_running) {
-                if (lastCheckedMeasurement !== measurementStore.current_measurement) {
-                    lastCheckedMeasurement = measurementStore.current_measurement;
-                    if (measurementStore.current_measurement)
-                        headers[measurementStore.current_measurement]!.classList.add("active");
-                }
+                headers[measurementStore.current_measurement].classList.add("active");
+
                 const ivResponse: ResponseData = await getData("iv");
                 const annealingResponse: ResponseData = await getData("annealing");
                 ivData.value = makeChartStructure(ivResponse, "IV");
                 annealingData.value = makeChartStructure(annealingResponse, "Annealing");
+            } else {
+                headers[measurementStore.current_measurement].classList.remove("active");
             }
 
         } catch (error) {
@@ -502,7 +505,7 @@ input:focus {
 }
 
 .active::after {
-    content: "running";
+    content: " running";
     font-weight: bold;
     /* make a nice gradient text effect with a linear-gradient from left (primary-color) to middle (yellow-500) to right (red-500) */
     background: linear-gradient(to right, var(--primary-color), var(--yellow-500), var(--red-500));

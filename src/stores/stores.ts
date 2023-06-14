@@ -6,7 +6,7 @@ interface Header {
     name: string,
 }
 
-type Measurement = "Annealing" | "IV" | "FullRun" | null;
+type Measurement = "Annealing" | "IV" | "FullRun";
 
 export const useAddressesStore = defineStore({
     id: 'addresses',
