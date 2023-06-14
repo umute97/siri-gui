@@ -90,6 +90,7 @@ function validateHeader() {
     flex-direction: column;
     align-items: flex-start;
     border: 1px solid white;
+    border-radius: 8px;
     padding: 1rem;
 }
 .mc-header-section form label {
