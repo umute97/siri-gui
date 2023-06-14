@@ -20,7 +20,7 @@
 </template>
 <script setup lang="ts">
 import IPNode from '@/components/IPNode.vue';
-import { useAddressesStore } from '@/stores/addresses';
+import { useAddressesStore } from '@/stores/stores';
 import { reactive } from 'vue';
 import axios from 'axios';
 

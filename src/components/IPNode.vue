@@ -9,7 +9,7 @@
     </div>
 </template>
 <script setup lang="ts">
-import { useAddressesStore } from '@/stores/addresses';
+import { useAddressesStore } from '@/stores/stores';
 import { HomeIcon, FlagIcon } from '@heroicons/vue/24/outline';
 import { defineComponent, ref } from 'vue';
 const props = defineProps({

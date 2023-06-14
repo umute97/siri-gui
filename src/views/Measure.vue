@@ -75,7 +75,7 @@
 import MeasureCard from '@/components/MeasureCard.vue';
 import ProgressBar from '@/components/ProgressBar.vue';
 import ClearListHoverButton from '@/components/ClearListHoverButton.vue';
-import { useAddressesStore } from '@/stores/addresses';
+import { useAddressesStore } from '@/stores/stores';
 import { computed, defineComponent, onMounted, onUnmounted, reactive, ref, type Ref } from 'vue';
 import axios from 'axios';
 import {
