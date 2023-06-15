@@ -70,7 +70,7 @@ const indicatorStyle = computed(() => {
 async function getTemperatures(): Promise<MonitorResponse> {
     const payload = packData("get", "monitor", "/data/temperature:get_temperature", null);
     try {
-        const response = await axios.post(`http://${addresses.getFullGatewayAddress}`, payload);
+        const response = await axios.post(`${addresses.getFullGatewayAddress}`, payload);
         return response.data;
     } catch (error) {
         console.log(error);
@@ -81,7 +81,7 @@ async function getTemperatures(): Promise<MonitorResponse> {
 async function getTemperatureStableStatus(): Promise<StableStatus> {
     const payload = packData("get", "temperaturecontroller", "/is_stable", null);
     try {
-        const response = await axios.post(`http://${addresses.getFullGatewayAddress}`, payload);
+        const response = await axios.post(`${addresses.getFullGatewayAddress}`, payload);
         return response.data.result;
     } catch (error) {
         console.log(error);
@@ -93,7 +93,7 @@ async function setTemperatureSetPoint(): Promise<void> {
     const payload = { "command": "set_operation_point", "arguments": parseFloat(temperatureStore.set_point) }
     const data = packData("post", "temperaturecontroller", "/", payload)
     try {
-        await axios.post(`http://${addresses.getFullGatewayAddress}`, data);
+        await axios.post(`${addresses.getFullGatewayAddress}`, data);
     } catch (error) {
         console.log(error);
     }
@@ -103,7 +103,7 @@ async function setTemperatureFluctuation(): Promise<void> {
     const payload = { "command": "set_control_fluctuation", "arguments": parseFloat(temperatureStore.set_point) }
     const data = packData("post", "temperaturecontroller", "/", payload)
     try {
-        await axios.post(`http://${addresses.getFullGatewayAddress}`, data);
+        await axios.post(`${addresses.getFullGatewayAddress}`, data);
     } catch (error) {
         console.log(error);
     }
@@ -113,7 +113,7 @@ async function startControlling(): Promise<void> {
     const payload = { "set_value": parseFloat(temperatureStore.set_point), "timeout": 0 }
     const data = packData("post", "temperaturecontroller", "/start", payload)
     try {
-        await axios.post(`http://${addresses.getFullGatewayAddress}`, data);
+        await axios.post(`${addresses.getFullGatewayAddress}`, data);
     } catch (error) {
         console.log(error);
     }
@@ -122,7 +122,7 @@ async function startControlling(): Promise<void> {
 async function stopControlling(): Promise<void> {
     const data = packData("get", "temperaturecontroller", "/stop", null)
     try {
-        await axios.post(`http://${addresses.getFullGatewayAddress}`, data);
+        await axios.post(`${addresses.getFullGatewayAddress}`, data);
     } catch (error) {
         console.log(error);
     }

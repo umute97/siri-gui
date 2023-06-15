@@ -4,13 +4,12 @@ import { defineStore } from 'pinia';
 export const useAddressesStore = defineStore({
     id: 'addresses',
     state: () => ({
-        backendBaseIP: '192.168.13.16',
+        backendBaseIP: 'http://192.168.13.16',
         grafanaBaseIP: 'http://grafana.192.168.13.33.nip.io',
-        gatewayPort: '5555',
     }),
     getters: {
         getFullGatewayAddress(): string {
-            return this.backendBaseIP + ':' + this.gatewayPort;
+            return this.backendBaseIP + ':5555';
         },
         getFullGrafanaAddress(): string {
             return this.grafanaBaseIP + '/d-solo/XkhkWeLmz/probestation?orgId=1&refresh=1s&var-station=4&panelId=2';

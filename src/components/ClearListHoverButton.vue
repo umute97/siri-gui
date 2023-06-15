@@ -20,7 +20,7 @@ let listLengthInterval: number = 0;
 async function clearList() {
     const payload = packData('delete', 'supervisor', '/measurements/', null);
     try {
-        await axios.post(`http://${addresses.getFullGatewayAddress}`, payload);
+        await axios.post(`${addresses.getFullGatewayAddress}`, payload);
     } catch (error) {
         console.error(error);
     }
@@ -29,7 +29,7 @@ async function clearList() {
 async function getListLength() {
     const payload = packData('get', 'supervisor', '/measurements/length', null);
     try {
-        const response = await axios.post(`http://${addresses.getFullGatewayAddress}`, payload);
+        const response = await axios.post(`${addresses.getFullGatewayAddress}`, payload);
         measurementStore.max_measurement_index = response.data.measurements;
     } catch (error) {
         console.error(error);

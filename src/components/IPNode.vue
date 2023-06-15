@@ -1,8 +1,7 @@
 <template>
-    <div :class="nodeClass">
+    <div class="node">
         <figure>
-            <HomeIcon class="w-6 h-6" v-if="networkType === 'host'"/>
-            <FlagIcon class="w-6 h-6" v-else/>
+            <HomeIcon class="w-6 h-6"/>
             <figcaption>{{ label }}</figcaption>
         </figure>
         <input type="text" v-model="addressesStore[props.network as keyof typeof addressesStore]"/>
@@ -10,14 +9,10 @@
 </template>
 <script setup lang="ts">
 import { useAddressesStore } from '@/stores/stores';
-import { HomeIcon, FlagIcon } from '@heroicons/vue/24/outline';
+import { HomeIcon } from '@heroicons/vue/24/outline';
 import { defineComponent } from 'vue';
 const props = defineProps({
     label: {
-        type: String,
-        required: true,
-    },
-    networkType: {
         type: String,
         required: true,
     },
@@ -29,11 +24,9 @@ const props = defineProps({
 defineComponent({
     components: {
         HomeIcon,
-        FlagIcon,
     },
 });
 const addressesStore = useAddressesStore();
-const nodeClass = props.networkType === 'host' ? 'host-node' : 'port-node';
 </script>
 <style scoped>
 
@@ -55,26 +48,11 @@ figure svg path {
     stroke-width: 1.1;
 }
 
-.host-node {
+.node {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
     align-items: center;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
-.port-node {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    align-items: center;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) translate(100%, 100%);
 }
 
 div:focus-within {
@@ -83,7 +61,6 @@ div:focus-within {
 
 input {
     font: inherit;
-    width: 60%;
     padding: 0.5rem;
     border: none;
     border-bottom: 1px solid white;

@@ -1,9 +1,7 @@
 <template>
     <article class="settings-page">
         <section class="network-section">
-            <IPNode :label="backendNode.label" :network="backendNode.network" :network-type="backendNode.networkType" />
-            <IPNode v-for="node in portNodes" :key="node.label" :label="node.label" :network="node.network"
-                :network-type="node.networkType" />
+            <IPNode v-for="node in nodes" :key="node.label" :label="node.label" :network="node.network"/>
         </section>
         <section class="mc-header-section">
             <form @submit.prevent="validateHeader">
@@ -26,17 +24,15 @@ import { useAddressesStore, useHeaderStore } from '@/stores/stores';
 import axios from 'axios';
 import { onMounted } from 'vue';
 
-const backendNode = {
-    label: 'The Backend',
-    networkType: 'host',
-    network: 'backendBaseIP',
-}
-const portNodes = [
+const nodes = [
     {
-        label: 'Gateway',
-        networkType: 'port',
-        network: 'gatewayPort',
+        label: "The Backend",
+        network: "backendBaseIP",
     },
+    {
+        label: "Grafana",
+        network: "grafanaBaseIP",
+    }
 ]
 
 const addresses = useAddressesStore();
@@ -45,7 +41,7 @@ const header = useHeaderStore();
 function submitHeader() {
     const headerPayload = packData("post", "storage", "/data", header.getHeader);
     try {
-        axios.post(`http://${addresses.getFullGatewayAddress}`, headerPayload);
+        axios.post(`${addresses.getFullGatewayAddress}`, headerPayload);
     } catch (error) {
         console.error(error);
     }
@@ -54,7 +50,7 @@ function submitHeader() {
 async function requestHeader(): Promise<Header> {
     const headerPayload = packData("get", "storage", "/data", null);
     try {
-        const response = await axios.post(`http://${addresses.getFullGatewayAddress}`, headerPayload);
+        const response = await axios.post(`${addresses.getFullGatewayAddress}`, headerPayload);
         return pick(response.data, 'operator', 'project', 'name');
     } catch (error) {
         console.error(error);
@@ -81,7 +77,9 @@ onMounted(async () => {
 <style scoped>
 .settings-page {
     display: flex;
+    flex-direction: column;
     height: 100%;
+    padding: 2rem;
 }
 
 .mc-header-section {
@@ -137,12 +135,11 @@ onMounted(async () => {
 }
 
 .network-section {
-    flex: 1;
     position: relative;
     width: 100%;
     height: 100%;
     display: flex;
-    justify-content: center;
+    justify-content: space-evenly;
     align-items: center;
 }
 </style>
