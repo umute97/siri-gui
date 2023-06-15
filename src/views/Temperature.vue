@@ -11,8 +11,8 @@
             <form class="temperature-submit">
                 <input type="number" id="set-temperature" name="set-temperature" />
                 <section class="submit-btns">
-                    <input type="submit" value="Set" class="btn" />
-                    <input type="submit" value="Fluctuation" class="btn" />
+                    <input type="submit" value="Set" class="primary btn" />
+                    <input type="submit" value="Fluctuation" class="yellow btn" />
                 </section>
             </form>
         </article>
@@ -26,6 +26,11 @@
         </article>
         <article class="controls card">
             <header class="card-header">Controls</header>
+            <section class="control-buttons">
+                <input type="submit" value="Start" class="primary btn">
+                <input type="submit" value="Stop" class="red btn">
+                <input type="submit" value="Reset" class="yellow btn">
+            </section>
         </article>
         <article class="grafana card">
             <header class="card-header">Graph</header>
@@ -132,6 +137,11 @@ onUnmounted(() => {
     grid-area: grafana;
 }
 
+.grafana iframe {
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
 .channel-wrapper {
     display: flex;
     justify-content: space-evenly;
@@ -183,7 +193,7 @@ onUnmounted(() => {
     display: flex;
     justify-content: space-evenly;
     align-items: center;
-    margin: 0.5rem;
+    margin: 1rem;
     gap: 1rem;
 }
 
@@ -195,12 +205,23 @@ onUnmounted(() => {
     padding: 5px;
     cursor: pointer;
     color: var(--zinc);
-    background: var(--primary-color);
     height: 2rem;
     font: inherit;
     font-size: 1rem;
     font-weight: 600;
     box-shadow: 5px 5px 5px 0 rgba(0, 0, 0, 0.4);
+}
+
+.primary {
+    background: var(--primary-color);
+}
+
+.red {
+    background: var(--red-500);
+}
+
+.yellow {
+    background: var(--yellow-500);
 }
 
 .status-indicator {
@@ -217,5 +238,13 @@ onUnmounted(() => {
     align-items: center;
     gap: 1rem;
     margin: 1rem;
+}
+
+.control-buttons {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    gap: 1rem;
+    margin: 1rem;   
 }
 </style>
