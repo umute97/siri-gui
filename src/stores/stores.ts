@@ -17,11 +17,15 @@ export const useAddressesStore = defineStore({
     id: 'addresses',
     state: () => ({
         backendBaseIP: '192.168.13.16',
+        grafanaBaseIP: 'http://grafana.192.168.13.33.nip.io',
         gatewayPort: '5555',
     }),
     getters: {
         getFullGatewayAddress(): string {
             return this.backendBaseIP + ':' + this.gatewayPort;
+        },
+        getFullGrafanaAddress(): string {
+            return this.grafanaBaseIP + '/d-solo/XkhkWeLmz/probestation?orgId=1&refresh=1s&var-station=42&panelId=2';
         },
     },
 });

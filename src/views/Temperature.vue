@@ -11,37 +11,93 @@
             <form class="temperature-submit">
                 <input type="number" id="set-temperature" name="set-temperature" />
                 <section class="submit-btns">
-                    <input type="submit" value="Set" class="btn"/>
-                    <input type="submit" value="Fluctuation" class="btn"/>
+                    <input type="submit" value="Set" class="btn" />
+                    <input type="submit" value="Fluctuation" class="btn" />
                 </section>
             </form>
         </article>
         <article class="status card">
             <header class="card-header">Status</header>
-
+            <section class="status-wrapper">
+                <div :style="indicatorStyle"></div>
+                <p v-if="temperatureStore.getIsStable">Stable for {{ temperatureStore.getStableTimer }} seconds</p>
+                <p v-else>Not stable</p>
+            </section>  
         </article>
         <article class="controls card">
             <header class="card-header">Controls</header>
         </article>
         <article class="grafana card">
             <header class="card-header">Graph</header>
-
+            <iframe :src="addresses.getFullGrafanaAddress" frameborder="0" width="100%" height="100%"></iframe>
         </article>
     </article>
 </template>
 <script setup lang="ts">
-import { useTemperatureStore, useAddressesStore} from '@/stores/stores';
+import { useTemperatureStore, useAddressesStore, type StableStatus } from '@/stores/stores';
 import axios from 'axios';
 import TemperatureChannel from '@/components/TemperatureChannel.vue';
+import { computed, onMounted, onUnmounted } from 'vue';
 
 const temperatureStore = useTemperatureStore();
 const addresses = useAddressesStore();
+
+let temperatureStatusTimer = 0;
+const temperatureStableColor = computed(() => {
+    const is_stable = temperatureStore.stable_status.is_stable;
+    if (is_stable) return "var(--green-500)";
+    return "var(--red-500)";
+});
+
+const indicatorStyle = computed(() => {
+    return {
+        backgroundColor: temperatureStableColor.value,
+        width: "2rem",
+        height: "2rem",
+        borderRadius: "50%",
+        boxShadow: `0 0 0.5rem 0.25rem ${temperatureStableColor.value}`,
+    }
+});
+
+function packData(method: string, recipient: string, path: string, payload: object | null) {
+    return {
+        method,
+        recipient,
+        path,
+        payload,
+    };
+}
+
+async function getTemperatures(): Promise<number[]> {
+    const payload = packData("get", "monitor", "/data/temperature:get_temperature", null);
+    const response = await axios.post(`http://${addresses.getFullGatewayAddress}`, payload);
+    return response.data.value;
+}
+
+async function getTemperatureStableStatus(): Promise<StableStatus> {
+    const payload = packData("get", "temperaturecontroller", "/is_stable", null);
+    const response = await axios.post(`http://${addresses.getFullGatewayAddress}`, payload);
+    return response.data.result;
+}
+
+onMounted(() => {
+    temperatureStatusTimer = setInterval(async () => {
+        const temperatures = await getTemperatures();
+        const stableStatus = await getTemperatureStableStatus();
+        temperatureStore.setTemperatures(temperatures);
+        temperatureStore.setStableStatus(stableStatus);
+    }, 1000);
+});
+
+onUnmounted(() => {
+    clearInterval(temperatureStatusTimer);
+});
 
 </script>
 <style scoped>
 .temperature-view {
     display: grid;
-    grid-template-areas: 
+    grid-template-areas:
         "current-temperature grafana"
         "set-controls grafana"
         "status grafana"
@@ -72,6 +128,10 @@ const addresses = useAddressesStore();
     grid-area: set-controls;
 }
 
+.grafana {
+    grid-area: grafana;
+}
+
 .channel-wrapper {
     display: flex;
     justify-content: space-evenly;
@@ -89,9 +149,10 @@ const addresses = useAddressesStore();
     border-radius: 8px;
     background: var(--zinc);
 }
+
 .temperature-submit {
     display: grid;
-    grid-template-areas: 
+    grid-template-areas:
         "set-temperature"
         "submit-btns";
     grid-template-columns: 1fr;
@@ -140,5 +201,21 @@ const addresses = useAddressesStore();
     font-size: 1rem;
     font-weight: 600;
     box-shadow: 5px 5px 5px 0 rgba(0, 0, 0, 0.4);
+}
+
+.status-indicator {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    margin: 0.5rem;
+    transition: all 0.2s ease-in-out;
+}
+
+.status-wrapper {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 1rem;
+    margin: 1rem;
 }
 </style>

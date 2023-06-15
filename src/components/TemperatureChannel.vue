@@ -5,57 +5,23 @@
     </section>
 </template>
 <script setup lang="ts">
-import { useTemperatureStore, useAddressesStore, type StableStatus } from '@/stores/stores';
-import axios from 'axios';
-import { computed, onMounted } from 'vue';
+import { useTemperatureStore } from '@/stores/stores';
+import { storeToRefs } from 'pinia';
+import { computed } from 'vue';
 
 const temperatureStore = useTemperatureStore();
-const addresses = useAddressesStore();
-
+const { temperatures } = storeToRefs(temperatureStore);
 const currentTemperature = computed(() => {
-    const channelTemperature = temperatureStore.getChannelTemperature(props.channelNumber - 1);
-    if (channelTemperature) return channelTemperature.toFixed(1);
+    if (temperatures.value[props.channelNumber - 1]) return temperatures.value[props.channelNumber - 1].toFixed(1);
     return 'N/A';
-});
-
-let temperatureTimer: number = 0;
+})
 
 const props = defineProps({
     channelNumber: {
         type: Number,
         required: true
-    }
+    },
 })
-
-function packData(method: string, recipient: string, path: string, payload: object | null) {
-    return {
-        method,
-        recipient,
-        path,
-        payload,
-    };
-}
-
-async function getTemperatureStableStatus(): Promise<StableStatus> {
-    const payload = packData("get", "temperaturecontroller", "/is_stable", null);
-    const response = await axios.post(`http://${addresses.getFullGatewayAddress}`, payload);
-    return response.data.result;
-}
-
-async function getTemperatures(): Promise<number[]> {
-    const payload = packData("get", "monitor", "/data/temperature:get_temperature", null);
-    const response = await axios.post(`http://${addresses.getFullGatewayAddress}`, payload);
-    return response.data.value;
-}
-
-onMounted(() => {
-    temperatureTimer = setInterval(async () => {
-        const stableStatus = await getTemperatureStableStatus();
-        const temperatures = await getTemperatures();
-        temperatureStore.setStableStatus(stableStatus);
-        temperatureStore.setTemperatures(temperatures);
-    }, 1000);
-});
 </script>
 <style scoped>
 .temperature-channel {
