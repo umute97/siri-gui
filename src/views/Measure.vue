@@ -73,7 +73,7 @@
 </template>
 
 <script setup lang="ts">
-import { packData } from '@/util/utils';
+import { packData, makeAlibavaMeasDict, makeIVMeasDict, makeAnnealingMeasDict, makeChartStructure } from '@/util/utils';
 import type { HeaderCollection, Measurement, PayloadObject, ResponseData } from '@/util/types';
 import MeasureCard from '@/components/MeasureCard.vue';
 import ProgressBar from '@/components/ProgressBar.vue';
@@ -233,9 +233,6 @@ const enabledAlibavaControls = computed(() => {
 });
 
 // STYLES + COMPONENTS
-const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color');
-const zinc = getComputedStyle(document.documentElement).getPropertyValue('--zinc');
-
 let annealingHeader: HTMLDivElement;
 let ivHeader: HTMLDivElement;
 let alibavaHeader: HTMLDivElement;
@@ -251,84 +248,6 @@ function checkForm(inputs: Ref<number>[]): boolean {
         }
     }
     return true
-}
-
-function makeIVMeasDict(start: number, stop: number, step: number) {
-    return {
-        IV: {
-            global: {
-                high_voltage: {
-                    start: start,
-                    stop: stop,
-                    step: step,
-                }
-            },
-            I_tot: {}
-        }
-    }
-}
-
-function makeAnnealingMeasDict(temperature: number, duration: number) {
-    return {
-        Annealing: {
-            global: {
-                annealing_temperature: {
-                    start: temperature,
-                },
-                annealing_time: {
-                    start: duration,
-                },
-                storage_temperature: {
-                    start: -20,
-                },
-            },
-            GetAnnealing: {},
-        }
-    }
-}
-
-function makeAlibavaMeasDict(startVoltage: number, stopVoltage: number, stepVoltage: number, events: number) {
-    return {
-        FullRun: {
-            global: {
-                high_voltage: {
-                    start: startVoltage,
-                    stop: stopVoltage,
-                    step: stepVoltage,
-                },
-                compliance: {
-                    start: 100e-6,
-                },
-            },
-            Calibration: {},
-            Pedestal: {
-                nevts: {
-                    start: 5000,
-                },
-            },
-            RadSource: {
-                nevts: {
-                    start: events,
-                },
-            },
-        },
-    }
-}
-
-function makeChartStructure(data: ResponseData, label: string): ChartData {
-    return {
-        labels: data.x,
-        datasets: [
-            {
-                label,
-                data: data.y,
-                borderColor: primaryColor,
-                backgroundColor: zinc,
-                fill: false,
-                tension: 0.1,
-            },
-        ],
-    };
 }
 
 // MC INTERFACING FUNCTIONS
