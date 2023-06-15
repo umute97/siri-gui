@@ -13,7 +13,7 @@ export const useAddressesStore = defineStore({
             return this.backendBaseIP + ':' + this.gatewayPort;
         },
         getFullGrafanaAddress(): string {
-            return this.grafanaBaseIP + '/d-solo/XkhkWeLmz/probestation?orgId=1&refresh=1s&var-station=42&panelId=2';
+            return this.grafanaBaseIP + '/d-solo/XkhkWeLmz/probestation?orgId=1&refresh=1s&var-station=4&panelId=2';
         },
     },
 });
