@@ -319,7 +319,7 @@ onMounted(() => {
     alibavaHeader = document.getElementById('alibava-header') as HTMLDivElement;
     headers = {'Annealing': annealingHeader, 'IV': ivHeader, 'FullRun': alibavaHeader};
 
-    backendStatusTimer = setInterval(async () => {
+    backendStatusTimer = window.setInterval(async () => {
         let data = packData("get", "measurement", "/measurement_dict", null);
         try {
             const response = await axios.post(`${adresses.getFullGatewayAddress}/`, data);

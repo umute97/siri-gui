@@ -132,7 +132,7 @@ onMounted(async () => {
     const { range } = await getTemperatures();
     if (range.check_value) temperatureStore.setSetPoint(`${range.check_value}`);
 
-    temperatureStatusTimer = setInterval(async () => {
+    temperatureStatusTimer = window.setInterval(async () => {
         const { value } = await getTemperatures();
         const stableStatus = await getTemperatureStableStatus();
         temperatureStore.setTemperatures(value);

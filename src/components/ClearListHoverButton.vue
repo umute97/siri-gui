@@ -37,7 +37,7 @@ async function getListLength() {
 }
 
 onMounted(() => {
-    listLengthInterval = setInterval(getListLength, 1000);
+    listLengthInterval = window.setInterval(getListLength, 1000);
 });
 
 onUnmounted(() => {
