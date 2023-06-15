@@ -39,7 +39,9 @@
     </article>
 </template>
 <script setup lang="ts">
-import { useTemperatureStore, useAddressesStore, type StableStatus } from '@/stores/stores';
+import type { StableStatus } from '@/util/types';
+import { packData } from '@/util/utils';
+import { useTemperatureStore, useAddressesStore } from '@/stores/stores';
 import axios from 'axios';
 import TemperatureChannel from '@/components/TemperatureChannel.vue';
 import { computed, onMounted, onUnmounted } from 'vue';
@@ -64,14 +66,6 @@ const indicatorStyle = computed(() => {
     }
 });
 
-function packData(method: string, recipient: string, path: string, payload: object | null) {
-    return {
-        method,
-        recipient,
-        path,
-        payload,
-    };
-}
 
 async function getTemperatures(): Promise<number[]> {
     const payload = packData("get", "monitor", "/data/temperature:get_temperature", null);

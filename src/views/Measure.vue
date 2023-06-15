@@ -73,6 +73,8 @@
 </template>
 
 <script setup lang="ts">
+import { packData } from '@/util/utils';
+import type { HeaderCollection, Measurement, PayloadObject, ResponseData } from '@/util/types';
 import MeasureCard from '@/components/MeasureCard.vue';
 import ProgressBar from '@/components/ProgressBar.vue';
 import ClearListHoverButton from '@/components/ClearListHoverButton.vue';
@@ -80,6 +82,7 @@ import HoverHeader from '@/components/HoverHeader.vue';
 import { useAddressesStore, useMeasurementStore } from '@/stores/stores';
 import { computed, defineComponent, onMounted, onUnmounted, reactive, ref, type Ref } from 'vue';
 import axios from 'axios';
+import { Line } from 'vue-chartjs';
 import {
     Chart as ChartJS,
     LinearScale,
@@ -92,8 +95,6 @@ import {
     type ChartData,
 } from 'chart.js';
 
-import { Line } from 'vue-chartjs';
-
 ChartJS.register(
     LinearScale,
     CategoryScale,
@@ -103,20 +104,6 @@ ChartJS.register(
     Tooltip,
     Legend,
 );
-
-interface ResponseData {
-    x: number[];
-    y: number[];
-};
-
-interface PayloadObject {
-    state: string;
-    measurement_index?: number;
-};
-
-type Measurement = "Annealing" | "IV" | "FullRun";
-type HeaderCollection = { [key in Measurement]: HTMLDivElement;};
-
 
 defineComponent({
     components: {
@@ -209,7 +196,6 @@ const events: Ref<number> = ref(150000);
 const adresses = useAddressesStore();
 const measurementStore = useMeasurementStore();
 const backendStatus: Ref<string | null> = ref(null);
-let lastCheckedMeasurement: Measurement;
 let backendStatusTimer: number = -1;
 
 const enabledIVControls = computed(() => {
@@ -257,15 +243,6 @@ let alibavaHeader: HTMLDivElement;
 let headers: HeaderCollection;
 
 // HELPER FUNCTIONS
-function packData(method: string, recipient: string, path: string, payload: object | null) {
-    return {
-        method,
-        recipient,
-        path,
-        payload,
-    };
-}
-
 function checkForm(inputs: Ref<number>[]): boolean {
     // Very crude input validation
     for (const input of inputs) {

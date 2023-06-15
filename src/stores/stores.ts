@@ -1,17 +1,5 @@
+import { type Header, type StableStatus, type Measurement } from '@/util/types';
 import { defineStore } from 'pinia';
-
-interface Header {
-    operator: string,
-    project: string,
-    name: string,
-}
-
-export interface StableStatus {
-    stable_time: number,
-    is_stable: boolean,
-}
-
-type Measurement = "Annealing" | "IV" | "FullRun";
 
 export const useAddressesStore = defineStore({
     id: 'addresses',

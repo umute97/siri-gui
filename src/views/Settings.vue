@@ -19,16 +19,12 @@
     </article>
 </template>
 <script setup lang="ts">
+import type { Header } from '@/util/types';
+import { packData, pick } from '@/util/utils';
 import IPNode from '@/components/IPNode.vue';
 import { useAddressesStore, useHeaderStore } from '@/stores/stores';
 import axios from 'axios';
 import { onMounted } from 'vue';
-
-interface Header {
-    operator: string;
-    project: string;
-    name: string;
-}
 
 const backendNode = {
     label: 'The Backend',
@@ -45,27 +41,6 @@ const portNodes = [
 
 const addresses = useAddressesStore();
 const header = useHeaderStore();
-
-// TODO: Move to utils
-function packData(method: string, recipient: string, path: string, payload: object | null) {
-    return {
-        method,
-        recipient,
-        path,
-        payload,
-    };
-}
-
-// TODO: Move to utils, make generic
-function pick(obj: object, ...props: any[]): Header {
-    return props.reduce((result, prop) => {
-        if (obj.hasOwnProperty(prop)) {
-            result[prop] = obj[prop as keyof typeof obj];
-        }
-        return result;
-    }, {})
-
-}
 
 function submitHeader() {
     const headerPayload = packData("post", "storage", "/data", header.getHeader);

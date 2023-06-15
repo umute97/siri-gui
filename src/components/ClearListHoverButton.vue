@@ -6,6 +6,7 @@
     </button>
 </template>
 <script setup lang="ts">
+import { packData } from '@/util/utils';
 import { useAddressesStore, useMeasurementStore } from '@/stores/stores';
 import { FireIcon } from '@heroicons/vue/24/outline';
 import axios from 'axios';
@@ -16,14 +17,6 @@ const measurementStore = useMeasurementStore();
 
 let listLengthInterval: number = 0;
 
-function packData(method: string, recipient: string, path: string, payload: object | null) {
-    return {
-        method,
-        recipient,
-        path,
-        payload,
-    };
-}
 async function clearList() {
     const payload = packData('delete', 'supervisor', '/measurements/', null);
     try {
