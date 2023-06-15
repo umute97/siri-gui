@@ -20,8 +20,8 @@
             <header class="card-header">Status</header>
             <section class="status-wrapper">
                 <div :style="indicatorStyle"></div>
-                <p v-if="temperatureStore.getIsStable">Stable for {{ temperatureStore.getStableTimer }} seconds</p>
-                <p v-else>Not stable</p>
+                <p v-if="temperatureStore.getIsStable">Stable for {{ temperatureStore.getStableTimer }} sec.</p>
+                <p v-else>Not stable ({{ Math.abs(temperatureStore.getStableTimer) }} sec. remaining)</p>
             </section>  
         </article>
         <article class="controls card">
@@ -69,14 +69,24 @@ const indicatorStyle = computed(() => {
 
 async function getTemperatures(): Promise<number[]> {
     const payload = packData("get", "monitor", "/data/temperature:get_temperature", null);
-    const response = await axios.post(`http://${addresses.getFullGatewayAddress}`, payload);
-    return response.data.value;
+    try {
+        const response = await axios.post(`http://${addresses.getFullGatewayAddress}`, payload);
+        return response.data.value;
+    } catch (error) {
+        console.log(error);
+        return [];
+    }
 }
 
 async function getTemperatureStableStatus(): Promise<StableStatus> {
     const payload = packData("get", "temperaturecontroller", "/is_stable", null);
-    const response = await axios.post(`http://${addresses.getFullGatewayAddress}`, payload);
-    return response.data.result;
+    try {
+        const response = await axios.post(`http://${addresses.getFullGatewayAddress}`, payload);
+        return response.data.result;
+    } catch (error) {
+        console.log(error);
+        return { is_stable: false, stable_time: 0 };
+    }
 }
 
 onMounted(() => {
