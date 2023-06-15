@@ -9,10 +9,10 @@
         <article class="set-controls card">
             <header class="card-header">Set</header>
             <form class="temperature-submit">
-                <input type="number" id="set-temperature" name="set-temperature" />
+                <input type="number" id="set-temperature" name="set-temperature" v-model="temperatureStore.set_point"/>
                 <section class="submit-btns">
-                    <input type="submit" value="Set" class="primary btn" />
-                    <input type="submit" value="Fluctuation" class="yellow btn" />
+                    <button class="primary btn" @click="setTemperatureSetPoint">Set</button>
+                    <button class="yellow btn" @click="setTemperatureFluctuation">Fluctuation</button>
                 </section>
             </form>
         </article>
@@ -27,9 +27,9 @@
         <article class="controls card">
             <header class="card-header">Controls</header>
             <section class="control-buttons">
-                <input type="submit" value="Start" class="primary btn">
-                <input type="submit" value="Stop" class="red btn">
-                <input type="submit" value="Reset" class="yellow btn">
+                <button class="primary btn" @click="startControlling">Start</button>
+                <button class="red btn" @click="stopControlling">Stop</button>
+                <button class="yellow btn">Reset</button>
             </section>
         </article>
         <article class="grafana card">
@@ -39,7 +39,7 @@
     </article>
 </template>
 <script setup lang="ts">
-import type { StableStatus } from '@/util/types';
+import type { StableStatus, MonitorResponse } from '@/util/types';
 import { packData } from '@/util/utils';
 import { useTemperatureStore, useAddressesStore } from '@/stores/stores';
 import axios from 'axios';
@@ -48,8 +48,8 @@ import { computed, onMounted, onUnmounted } from 'vue';
 
 const temperatureStore = useTemperatureStore();
 const addresses = useAddressesStore();
-
 let temperatureStatusTimer = 0;
+
 const temperatureStableColor = computed(() => {
     const is_stable = temperatureStore.stable_status.is_stable;
     if (is_stable) return "var(--green-500)";
@@ -67,14 +67,14 @@ const indicatorStyle = computed(() => {
 });
 
 
-async function getTemperatures(): Promise<number[]> {
+async function getTemperatures(): Promise<MonitorResponse> {
     const payload = packData("get", "monitor", "/data/temperature:get_temperature", null);
     try {
         const response = await axios.post(`http://${addresses.getFullGatewayAddress}`, payload);
-        return response.data.value;
+        return response.data;
     } catch (error) {
         console.log(error);
-        return [];
+        return { value: [], range: {} }
     }
 }
 
@@ -89,11 +89,53 @@ async function getTemperatureStableStatus(): Promise<StableStatus> {
     }
 }
 
-onMounted(() => {
+async function setTemperatureSetPoint(): Promise<void> {
+    const payload = { "command": "set_operation_point", "arguments": parseFloat(temperatureStore.set_point) }
+    const data = packData("post", "temperaturecontroller", "/", payload)
+    try {
+        await axios.post(`http://${addresses.getFullGatewayAddress}`, data);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+async function setTemperatureFluctuation(): Promise<void> {
+    const payload = { "command": "set_control_fluctuation", "arguments": parseFloat(temperatureStore.set_point) }
+    const data = packData("post", "temperaturecontroller", "/", payload)
+    try {
+        await axios.post(`http://${addresses.getFullGatewayAddress}`, data);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+async function startControlling(): Promise<void> {
+    const payload = { "set_value": parseFloat(temperatureStore.set_point), "timeout": 0 }
+    const data = packData("post", "temperaturecontroller", "/start", payload)
+    try {
+        await axios.post(`http://${addresses.getFullGatewayAddress}`, data);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+async function stopControlling(): Promise<void> {
+    const data = packData("get", "temperaturecontroller", "/stop", null)
+    try {
+        await axios.post(`http://${addresses.getFullGatewayAddress}`, data);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+onMounted(async () => {
+    const { range } = await getTemperatures();
+    if (range.check_value) temperatureStore.setSetPoint(`${range.check_value}`);
+
     temperatureStatusTimer = setInterval(async () => {
-        const temperatures = await getTemperatures();
+        const { value } = await getTemperatures();
         const stableStatus = await getTemperatureStableStatus();
-        temperatureStore.setTemperatures(temperatures);
+        temperatureStore.setTemperatures(value);
         temperatureStore.setStableStatus(stableStatus);
     }, 1000);
 });
@@ -185,6 +227,12 @@ onUnmounted(() => {
     align-items: flex-start;
     margin: 1rem;
     transition: all 0.2s ease-in-out;
+}
+
+#set-temperature::after {
+    content: "°C";
+    font-size: 1rem;
+    margin-left: 0.5rem;
 }
 
 #set-temperature:focus {
