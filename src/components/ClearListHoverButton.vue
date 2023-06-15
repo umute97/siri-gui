@@ -45,7 +45,7 @@ onUnmounted(() => {
 });
 
 </script>
-<style>
+<style scoped>
 button {
     position: absolute;
     background: var(--primary-color);
