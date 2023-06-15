@@ -173,7 +173,7 @@ onUnmounted(() => {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    margin: 0.5rem;
+    margin: 1rem;
     transition: all 0.2s ease-in-out;
 }
 
