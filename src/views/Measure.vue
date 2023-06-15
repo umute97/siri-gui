@@ -16,7 +16,7 @@
                 </form>
             </template>
             <template #content>
-                <Line :options="annealingOptions" :data="annealingData"></Line>
+                <Line :options="annealingOptions" :data="annealingData as any"></Line>
             </template>
         </MeasureCard>
         <MeasureCard @start="startMeasurement('iv')" @pause="controlRun('pause')" @stop="controlRun('stop')"
@@ -38,7 +38,7 @@
                 </form>
             </template>
             <template #content>
-                <Line :options="ivOptions" :data="ivData"></Line>
+                <Line :options="ivOptions" :data="ivData as any"></Line>
             </template>
         </MeasureCard>
         <MeasureCard @start="startMeasurement('alibava')" @pause="controlRun('pause')" @stop="controlRun('stop')"
