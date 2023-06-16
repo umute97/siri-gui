@@ -1,6 +1,6 @@
 build-image:
     tags:
-        - docker-image-build
+        - docker
     script:
         - ""
     variables:
