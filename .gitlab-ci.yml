@@ -1,14 +1,3 @@
-build-image:
-    tags:
-        - docker
-    script:
-        - ""
-    variables:
-        TO: $CI_REGISTRY_IMAGE/static:latest
-        DOCKER_FILE: Dockerfile
-    only:
-        - main
-
 stages:
   - build
 
@@ -17,6 +6,8 @@ stages:
 dind-build:
   stage: build
 
+  tags:
+    - docker
   image:
     name: docker:stable
 
@@ -33,3 +24,6 @@ dind-build:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
     - docker build -t "$CI_REGISTRY_IMAGE:latest" .
     - docker push "$CI_REGISTRY_IMAGE:latest"
+
+  only:
+    - main
