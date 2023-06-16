@@ -1,0 +1,10 @@
+build-image:
+    tags:
+        - docker-image-build
+    script:
+        - ""
+    variables:
+        TO: $CI_REGISTRY_IMAGE/static:latest
+        DOCKER_FILE: Dockerfile
+    only:
+        - main
