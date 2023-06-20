@@ -6,6 +6,12 @@
                 <TemperatureChannel v-for="channel in 4" :channelNumber="channel" :key="channel" />
             </section>
         </article>
+        <article class="current-dewpoint card">
+            <header class="card-header">Current Dewpoint</header>
+            <section class="dewpoint-wrapper">
+                <p :class="dewpointBelowSet">{{ temperatureStore.dew_point }} °C</p>
+            </section>
+        </article>
         <article class="set-controls card">
             <header class="card-header">Set</header>
             <form class="temperature-submit">
@@ -34,7 +40,7 @@
         </article>
         <article class="grafana card">
             <header class="card-header">Graph</header>
-            <iframe :src="addresses.getFullGrafanaAddress" frameborder="0" width="100%" height="100%"></iframe>
+            <iframe :src="addresses.getFullGrafanaAddress" frameborder="0" width="100%" height="90%"></iframe>
         </article>
     </article>
 </template>
@@ -49,6 +55,11 @@ import { computed, onMounted, onUnmounted } from 'vue';
 const temperatureStore = useTemperatureStore();
 const addresses = useAddressesStore();
 let temperatureStatusTimer = 0;
+
+const dewpointBelowSet = computed(() => {
+    if (temperatureStore.dew_point < Number(temperatureStore.set_point)) return "var(--primary-color)";
+    return "var(--red-500)";
+});
 
 const temperatureStableColor = computed(() => {
     const is_stable = temperatureStore.stable_status.is_stable;
@@ -75,6 +86,18 @@ async function getTemperatures(): Promise<MonitorResponse> {
     } catch (error) {
         console.log(error);
         return { value: [], range: {} }
+    }
+}
+
+async function getDewpoint(): Promise<number> {
+    const payload = { "device": "dewpointcontroller", "command": "get_dew_point"};
+    const data = packData("post", "dewpointcontroller", "/", payload)
+    try {
+        const response = await axios.post(`${addresses.getFullGatewayAddress}`, data);
+        return response.data.result.toFixed(1);
+    } catch (error) {
+        console.log(error);
+        return 0;
     }
 }
 
@@ -134,9 +157,11 @@ onMounted(async () => {
 
     temperatureStatusTimer = window.setInterval(async () => {
         const { value } = await getTemperatures();
+        const dewpoint = await getDewpoint();
         const stableStatus = await getTemperatureStableStatus();
         temperatureStore.setTemperatures(value);
         temperatureStore.setStableStatus(stableStatus);
+        temperatureStore.setDewPoint(dewpoint);
     }, 1000);
 });
 
@@ -150,6 +175,7 @@ onUnmounted(() => {
     display: grid;
     grid-template-areas:
         "current-temperature grafana"
+        "current-dewpoint grafana"
         "set-controls grafana"
         "status grafana"
         "controls grafana";
@@ -161,6 +187,9 @@ onUnmounted(() => {
 .current-temperature {
     grid-area: current-temperature;
     padding-bottom: 2rem;
+}
+.current-dewpoint {
+    grid-area: current-dewpoint;
 }
 
 .set-controls {
@@ -298,4 +327,11 @@ onUnmounted(() => {
     gap: 1rem;
     margin: 1rem;   
 }
+
+.dewpoint-wrapper p {
+    margin: 1rem;
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--primary-color);
+} 
 </style>

@@ -75,6 +75,7 @@ export const useTemperatureStore = defineStore({
         stable_status: {} as StableStatus,
         temperatures: [] as number[],
         set_point: "" as string,
+        dew_point: 0 as number,
     }),
     getters: {
         getStableTimer(): number {
@@ -96,6 +97,9 @@ export const useTemperatureStore = defineStore({
         },
         setSetPoint(set_point: string): void {
             this.set_point = set_point;
+        },
+        setDewPoint(dew_point: number): void {
+            this.dew_point = dew_point;
         },
     }
 });
