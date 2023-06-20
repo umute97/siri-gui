@@ -17,11 +17,11 @@
     </article>
 </template>
 <script setup lang="ts">
-import type { Header } from '@/util/types';
-import { packData, pick } from '@/util/utils';
+import { submitHeader, requestHeader } from '@/util/networking';
+
 import IPNode from '@/components/IPNode.vue';
+
 import { useAddressesStore, useHeaderStore } from '@/stores/stores';
-import axios from 'axios';
 import { onMounted } from 'vue';
 
 const nodes = [
@@ -35,28 +35,7 @@ const nodes = [
     }
 ]
 
-const addresses = useAddressesStore();
 const header = useHeaderStore();
-
-function submitHeader() {
-    const headerPayload = packData("post", "storage", "/data", header.getHeader);
-    try {
-        axios.post(`${addresses.getFullGatewayAddress}`, headerPayload);
-    } catch (error) {
-        console.error(error);
-    }
-}
-
-async function requestHeader(): Promise<Header> {
-    const headerPayload = packData("get", "storage", "/data", null);
-    try {
-        const response = await axios.post(`${addresses.getFullGatewayAddress}`, headerPayload);
-        return pick(response.data, 'operator', 'project', 'name');
-    } catch (error) {
-        console.error(error);
-        return { operator: '', project: '', name: '' };
-    }
-}
 
 function validateHeader() {
     for (const [key, value] of Object.entries(header.getHeader)) {

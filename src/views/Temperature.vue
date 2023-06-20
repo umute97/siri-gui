@@ -15,7 +15,7 @@
         <article class="set-controls card">
             <header class="card-header">Set</header>
             <form class="temperature-submit">
-                <input type="number" id="set-temperature" name="set-temperature" v-model="temperatureStore.set_point"/>
+                <input type="number" id="set-temperature" name="set-temperature" v-model="temperatureStore.set_point" />
                 <section class="submit-btns">
                     <button class="primary btn" @click.prevent="setTemperatureSetPoint">Set</button>
                     <button class="yellow btn" @click.prevent="setTemperatureFluctuation">Fluctuation</button>
@@ -28,7 +28,7 @@
                 <div :style="indicatorStyle"></div>
                 <p v-if="temperatureStore.getIsStable">Stable for {{ temperatureStore.getStableTimer }} sec.</p>
                 <p v-else>Not stable ({{ Math.abs(temperatureStore.getStableTimer) }} sec. remaining)</p>
-            </section>  
+            </section>
         </article>
         <article class="controls card">
             <header class="card-header">Controls</header>
@@ -45,10 +45,16 @@
     </article>
 </template>
 <script setup lang="ts">
-import type { StableStatus, MonitorResponse } from '@/util/types';
-import { packData } from '@/util/utils';
+import {
+    getTemperatures,
+    getDewpoint,
+    getTemperatureStableStatus,
+    startControlling,
+    stopControlling,
+    setTemperatureFluctuation,
+    setTemperatureSetPoint
+} from '@/util/networking';
 import { useTemperatureStore, useAddressesStore } from '@/stores/stores';
-import axios from 'axios';
 import TemperatureChannel from '@/components/TemperatureChannel.vue';
 import { computed, onMounted, onUnmounted } from 'vue';
 
@@ -76,80 +82,6 @@ const indicatorStyle = computed(() => {
         boxShadow: `0 0 0.5rem 0.25rem ${temperatureStableColor.value}`,
     }
 });
-
-
-async function getTemperatures(): Promise<MonitorResponse> {
-    const payload = packData("get", "monitor", "/data/temperature:get_temperature", null);
-    try {
-        const response = await axios.post(`${addresses.getFullGatewayAddress}`, payload);
-        return response.data;
-    } catch (error) {
-        console.log(error);
-        return { value: [], range: {} }
-    }
-}
-
-async function getDewpoint(): Promise<number> {
-    const payload = { "device": "dewpointcontroller", "command": "get_dew_point"};
-    const data = packData("post", "dewpointcontroller", "/", payload)
-    try {
-        const response = await axios.post(`${addresses.getFullGatewayAddress}`, data);
-        return response.data.result.toFixed(1);
-    } catch (error) {
-        console.log(error);
-        return 0;
-    }
-}
-
-async function getTemperatureStableStatus(): Promise<StableStatus> {
-    const payload = packData("get", "temperaturecontroller", "/is_stable", null);
-    try {
-        const response = await axios.post(`${addresses.getFullGatewayAddress}`, payload);
-        return response.data.result;
-    } catch (error) {
-        console.log(error);
-        return { is_stable: false, stable_time: 0 };
-    }
-}
-
-async function setTemperatureSetPoint(): Promise<void> {
-    const payload = { "command": "set_operation_point", "arguments": parseFloat(temperatureStore.set_point) }
-    const data = packData("post", "temperaturecontroller", "/", payload)
-    try {
-        await axios.post(`${addresses.getFullGatewayAddress}`, data);
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-async function setTemperatureFluctuation(): Promise<void> {
-    const payload = { "command": "set_control_fluctuation", "arguments": parseFloat(temperatureStore.set_point) }
-    const data = packData("post", "temperaturecontroller", "/", payload)
-    try {
-        await axios.post(`${addresses.getFullGatewayAddress}`, data);
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-async function startControlling(): Promise<void> {
-    const payload = { "set_value": parseFloat(temperatureStore.set_point), "timeout": 0 }
-    const data = packData("post", "temperaturecontroller", "/start", payload)
-    try {
-        await axios.post(`${addresses.getFullGatewayAddress}`, data);
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-async function stopControlling(): Promise<void> {
-    const data = packData("get", "temperaturecontroller", "/stop", null)
-    try {
-        await axios.post(`${addresses.getFullGatewayAddress}`, data);
-    } catch (error) {
-        console.log(error);
-    }
-}
 
 onMounted(async () => {
     const { range } = await getTemperatures();
@@ -188,6 +120,7 @@ onUnmounted(() => {
     grid-area: current-temperature;
     padding-bottom: 2rem;
 }
+
 .current-dewpoint {
     grid-area: current-dewpoint;
 }
@@ -325,7 +258,7 @@ onUnmounted(() => {
     justify-content: space-evenly;
     align-items: center;
     gap: 1rem;
-    margin: 1rem;   
+    margin: 1rem;
 }
 
 .dewpoint-wrapper p {
@@ -333,5 +266,5 @@ onUnmounted(() => {
     font-size: 2rem;
     font-weight: bold;
     color: var(--primary-color);
-} 
+}
 </style>

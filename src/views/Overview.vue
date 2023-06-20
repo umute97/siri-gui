@@ -8,10 +8,6 @@
         </article>
     </section>
 </template>
-
-<script setup lang="ts">
-</script>
-
 <style>
 .overview-wrapper {
     margin-top: 10rem;

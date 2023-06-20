@@ -2,26 +2,13 @@
     <div class="hover-header"><span class="highlight">{{ header.operator }}</span> measuring sensor <span class="highlight">{{ header.name }} ({{ header.project }})</span></div>
 </template>
 <script setup lang="ts">
-import { useAddressesStore, useHeaderStore } from '@/stores/stores';
-import type { Header } from '@/util/types';
-import { packData, pick } from '@/util/utils';
-import axios from 'axios';
+import { requestHeader } from '@/util/networking';
+import { useHeaderStore } from '@/stores/stores';
 import { onMounted, ref } from 'vue';
 
 const headerStore = useHeaderStore();
-const addresses = useAddressesStore();
 const header = ref(headerStore.getHeader);
 
-async function requestHeader(): Promise<Header> {
-    const headerPayload = packData("get", "storage", "/data", null);
-    try {
-        const response = await axios.post(`${addresses.getFullGatewayAddress}`, headerPayload);
-        return pick(response.data, 'operator', 'project', 'name');
-    } catch (error) {
-        console.error(error);
-        return { operator: '', project: '', name: '' };
-    }
-}
 
 onMounted(async () => {
     const { operator, project, name } = await requestHeader();

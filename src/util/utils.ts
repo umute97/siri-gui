@@ -1,5 +1,6 @@
 import type { Header, ResponseData } from '@/util/types';
 import type { ChartData } from 'chart.js';
+import type { Ref } from 'vue';
 
 const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color');
 const zinc = getComputedStyle(document.documentElement).getPropertyValue('--zinc');
@@ -98,4 +99,14 @@ export function makeChartStructure(data: ResponseData, label: string): ChartData
             },
         ],
     };
+}
+
+export function checkForm(inputs: Ref<number>[]): boolean {
+    // Very crude input validation
+    for (const input of inputs) {
+        if (input.value === null || input.value === undefined || typeof input.value !== 'number') {
+            return false;
+        }
+    }
+    return true
 }

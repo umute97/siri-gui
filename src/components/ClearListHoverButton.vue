@@ -6,35 +6,14 @@
     </button>
 </template>
 <script setup lang="ts">
-import { packData } from '@/util/utils';
-import { useAddressesStore, useMeasurementStore } from '@/stores/stores';
+import { getListLength, clearList } from '@/util/networking';
+import { useMeasurementStore } from '@/stores/stores';
 import { FireIcon } from '@heroicons/vue/24/outline';
-import axios from 'axios';
 import { onMounted, onUnmounted } from 'vue';
 
-const addresses = useAddressesStore();
 const measurementStore = useMeasurementStore();
 
 let listLengthInterval: number = 0;
-
-async function clearList() {
-    const payload = packData('delete', 'supervisor', '/measurements/', null);
-    try {
-        await axios.post(`${addresses.getFullGatewayAddress}`, payload);
-    } catch (error) {
-        console.error(error);
-    }
-}
-
-async function getListLength() {
-    const payload = packData('get', 'supervisor', '/measurements/length', null);
-    try {
-        const response = await axios.post(`${addresses.getFullGatewayAddress}`, payload);
-        measurementStore.max_measurement_index = response.data.measurements;
-    } catch (error) {
-        console.error(error);
-    }
-}
 
 onMounted(() => {
     listLengthInterval = window.setInterval(getListLength, 1000);

@@ -73,14 +73,18 @@
 </template>
 
 <script setup lang="ts">
-import { packData, makeAlibavaMeasDict, makeIVMeasDict, makeAnnealingMeasDict, makeChartStructure } from '@/util/utils';
-import type { HeaderCollection, Measurement, PayloadObject, ResponseData } from '@/util/types';
+import { packData, makeAlibavaMeasDict, makeIVMeasDict, makeAnnealingMeasDict, makeChartStructure, checkForm } from '@/util/utils';
+import type { HeaderCollection, Measurement, ResponseData } from '@/util/types';
+import { controlRun, getData } from '@/util/networking';
+
 import MeasureCard from '@/components/MeasureCard.vue';
 import ProgressBar from '@/components/ProgressBar.vue';
 import ClearListHoverButton from '@/components/ClearListHoverButton.vue';
 import HoverHeader from '@/components/HoverHeader.vue';
+
 import { useAddressesStore, useMeasurementStore } from '@/stores/stores';
 import { computed, defineComponent, onMounted, onUnmounted, reactive, ref, type Ref } from 'vue';
+
 import axios from 'axios';
 import { Line } from 'vue-chartjs';
 import {
@@ -239,44 +243,7 @@ let alibavaHeader: HTMLDivElement;
 
 let headers: HeaderCollection;
 
-// HELPER FUNCTIONS
-function checkForm(inputs: Ref<number>[]): boolean {
-    // Very crude input validation
-    for (const input of inputs) {
-        if (input.value === null || input.value === undefined || typeof input.value !== 'number') {
-            return false;
-        }
-    }
-    return true
-}
-
 // MC INTERFACING FUNCTIONS
-async function controlRun(command: "run" | "start" | "pause" | "stop") {
-    command = command === "start" ? "run" : command;
-    const payload: PayloadObject = { state: command };
-    if (command !== "pause")
-        payload.measurement_index = 0;
-
-    const data = packData("put", "supervisor", "/control", payload);
-    try {
-        await axios.post(`${addresses.getFullGatewayAddress}/`, data);
-    }
-    catch (error) {
-        console.log(error);
-    }
-}
-
-async function getData(measurementType: string): Promise<ResponseData> {
-    const data = packData("get", "liveplot", `/measurements/${measurementType}`, null);
-    try {
-        const response = await axios.post(`${addresses.getFullGatewayAddress}/`, data);
-        return response.data;
-    } catch (error) {
-        console.log(error);
-    }
-    return { x: [], y: [] };
-}
-
 async function startMeasurement(measurementType: string) {
     measurementType = measurementType.toLowerCase();
     let measDict: object;
