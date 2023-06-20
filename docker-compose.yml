@@ -1,0 +1,10 @@
+version: "3.0"
+services:
+  siri:
+    image: siri:latest
+    deploy:
+      replicas: 1
+    ports:
+      - 5173:80
+    restart: always
+
