@@ -11,8 +11,8 @@
             <form class="temperature-submit">
                 <input type="number" id="set-temperature" name="set-temperature" v-model="temperatureStore.set_point"/>
                 <section class="submit-btns">
-                    <button class="primary btn" @click="setTemperatureSetPoint">Set</button>
-                    <button class="yellow btn" @click="setTemperatureFluctuation">Fluctuation</button>
+                    <button class="primary btn" @click.prevent="setTemperatureSetPoint">Set</button>
+                    <button class="yellow btn" @click.prevent="setTemperatureFluctuation">Fluctuation</button>
                 </section>
             </form>
         </article>
@@ -27,8 +27,8 @@
         <article class="controls card">
             <header class="card-header">Controls</header>
             <section class="control-buttons">
-                <button class="primary btn" @click="startControlling">Start</button>
-                <button class="red btn" @click="stopControlling">Stop</button>
+                <button class="primary btn" @click.prevent="startControlling">Start</button>
+                <button class="red btn" @click.prevent="stopControlling">Stop</button>
                 <button class="yellow btn">Reset</button>
             </section>
         </article>
