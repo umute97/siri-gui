@@ -193,7 +193,7 @@ const alibavaVStep: Ref<number> = ref(-100);
 const events: Ref<number> = ref(150000);
 
 // STATE
-const adresses = useAddressesStore();
+const addresses = useAddressesStore();
 const measurementStore = useMeasurementStore();
 const backendStatus: Ref<string | null> = ref(null);
 let backendStatusTimer: number = -1;
@@ -259,7 +259,7 @@ async function controlRun(command: "run" | "start" | "pause" | "stop") {
 
     const data = packData("put", "supervisor", "/control", payload);
     try {
-        await axios.post(`${adresses.getFullGatewayAddress}/`, data);
+        await axios.post(`${addresses.getFullGatewayAddress}/`, data);
     }
     catch (error) {
         console.log(error);
@@ -269,7 +269,7 @@ async function controlRun(command: "run" | "start" | "pause" | "stop") {
 async function getData(measurementType: string): Promise<ResponseData> {
     const data = packData("get", "liveplot", `/measurements/${measurementType}`, null);
     try {
-        const response = await axios.post(`${adresses.getFullGatewayAddress}/`, data);
+        const response = await axios.post(`${addresses.getFullGatewayAddress}/`, data);
         return response.data;
     } catch (error) {
         console.log(error);
@@ -303,7 +303,7 @@ async function startMeasurement(measurementType: string) {
 
     const payload = packData("post", "measurement", "/measurements", measDict);
     try {
-        await axios.post(`${adresses.getFullGatewayAddress}/`, payload);
+        await axios.post(`${addresses.getFullGatewayAddress}/`, payload);
     } catch (error) {
         console.log(error);
     }
@@ -322,7 +322,7 @@ onMounted(() => {
     backendStatusTimer = window.setInterval(async () => {
         let data = packData("get", "measurement", "/measurement_dict", null);
         try {
-            const response = await axios.post(`${adresses.getFullGatewayAddress}/`, data);
+            const response = await axios.post(`${addresses.getFullGatewayAddress}/`, data);
             if (response.data)
                 measurementStore.setCurrentMeasurement(Object.keys(response.data)[0] as Measurement);
         } catch (error) {
@@ -331,7 +331,7 @@ onMounted(() => {
 
         data = packData("get", "supervisor", "/control", null);
         try {
-            const response = await axios.post(`${adresses.getFullGatewayAddress}/`, data);
+            const response = await axios.post(`${addresses.getFullGatewayAddress}/`, data);
             backendStatus.value = response.data.state;
             measurementStore.setCurrentMeasurementIndex(response.data.measurement_index);
             measurementStore.setMeasurementRunning(backendStatus.value != "idle");
