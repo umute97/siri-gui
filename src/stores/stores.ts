@@ -4,7 +4,7 @@ import { defineStore } from 'pinia';
 export const useAddressesStore = defineStore({
     id: 'addresses',
     state: () => ({
-        backendBaseIP: 'http://192.168.13.16',
+        backendBaseIP: 'http://192.168.13.188',
         grafanaBaseIP: 'http://grafana.192.168.13.33.nip.io',
     }),
     getters: {

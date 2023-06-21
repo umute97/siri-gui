@@ -145,3 +145,35 @@ export async function stopControlling(): Promise<void> {
         console.log(error);
     }
 }
+
+export async function setISEGChannelVoltage(voltage: number, channel: number): Promise<void> {
+    const payload = { device: "high_voltage_device", command: "set_voltage", arguments: [voltage, channel] }
+    const data = packData("post", "devicemanager", "/", payload)
+    try {
+        await axios.post(`${addresses.getFullGatewayAddress}`, data);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export async function toggleISEGChannel(channel: number): Promise<void> {
+    const payload = { device: "high_voltage_device", command: "toggle_output", arguments: channel }
+    const data = packData("post", "devicemanager", "/", payload)
+    try {
+        await axios.post(`${addresses.getFullGatewayAddress}`, data);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export async function getISEGOutputs(): Promise<boolean[]> {
+    const payload = { device: "high_voltage_device", command: "get_all_outputs", arguments: null }
+    const data = packData("post", "devicemanager", "/", payload)
+    try {
+        const response = await axios.post(`${addresses.getFullGatewayAddress}`, data);
+        return response.data.result;
+    } catch (error) {
+        console.log(error);
+        return [false, false, false, false];
+    }
+}

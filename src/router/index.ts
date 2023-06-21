@@ -24,6 +24,11 @@ const router = createRouter({
       component: () => import('../views/Temperature.vue')
     },
     {
+      path: '/control',
+      name: 'Direct',
+      component: () => import('../views/Direct.vue')
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'NotFound',
       component: () => import('../views/NotFound.vue')
