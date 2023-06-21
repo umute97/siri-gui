@@ -321,7 +321,7 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-    clearInterval(backendStatusTimer);
+    window.clearInterval(backendStatusTimer);
 });
 
 </script>

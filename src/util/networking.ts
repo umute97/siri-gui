@@ -177,3 +177,27 @@ export async function getISEGOutputs(): Promise<boolean[]> {
         return [false, false, false, false];
     }
 }
+
+export async function getISEGVoltages(): Promise<number[]> {
+    const payload = { device: "high_voltage_device", command: "get_all_voltages", arguments: null }
+    const data = packData("post", "devicemanager", "/", payload)
+    try {
+        const response = await axios.post(`${addresses.getFullGatewayAddress}`, data);
+        return response.data.result;
+    } catch (error) {
+        console.log(error);
+        return [0, 0, 0, 0];
+    }
+}
+
+export async function getISEGCurrents(): Promise<number[]> {
+    const payload = { device: "high_voltage_device", command: "get_all_currents", arguments: null }
+    const data = packData("post", "devicemanager", "/", payload)
+    try {
+        const response = await axios.post(`${addresses.getFullGatewayAddress}`, data);
+        return response.data.result;
+    } catch (error) {
+        console.log(error);
+        return [0, 0, 0, 0];
+    }
+}

@@ -4,15 +4,21 @@
             <h1>Channel {{ props.channel }}</h1>
             <input type="checkbox" class="channel-switch" @click.prevent="$emit('toggleISEGChannel', props.channel)" :checked="props.channelEnabled">
         </header>
-        <section class="current">
-            <label>Current</label>
-            <input type="number" disabled v-bind="current">
+        <section class="iseg-values">
+            <section class="current-values">
+                <label>Current</label>
+                <input type="number" disabled v-model="props.current">
+            </section>
+            <section class="voltage-values">
+                <label>Voltage</label>
+                <input type="number" disabled v-model="props.voltage">
+            </section>
         </section>
         <section class="voltage">
-            <label>Voltage</label>
+            <label>Set Voltage</label>
             <form>
-                <input type="number" v-model.number="voltage">
-                <input class="voltage-submit" type="submit" value="Set" @click.prevent="$emit('setISEGChannelVoltage', Number(voltage.toFixed(2)), props.channel);">
+                <input type="number" v-model.number="setVoltage">
+                <input class="voltage-submit" type="submit" value="Set" @click.prevent="$emit('setISEGChannelVoltage', Number(setVoltage.toFixed(2)), props.channel);">
             </form>
         </section>
     </article>
@@ -30,10 +36,16 @@ const props = defineProps({
         type: Boolean,
         required: true,
     },
+    current: {
+        type: Number,
+        required: true,
+    },
+    voltage: {
+        type: Number,
+        required: true,
+    },
 });
-
-const current = ref(0);
-const voltage = ref(0);
+const setVoltage = ref(0);
 
 </script>
 
@@ -42,6 +54,9 @@ article {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    border: 1px solid white;
+    padding: 1rem;
+    border-radius: 8px;
 }
 
 .channel-switch {
@@ -70,11 +85,17 @@ header {
     align-items: center;
 }
 
-.voltage, .current {
+.voltage {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
+    align-self: center;
+}
+
+.iseg-values {
+    display: flex;
+    gap: 1rem;
 }
 
 label {

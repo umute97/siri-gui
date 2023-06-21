@@ -98,7 +98,7 @@ onMounted(async () => {
 });
 
 onUnmounted(() => {
-    clearInterval(temperatureStatusTimer);
+    window.clearInterval(temperatureStatusTimer);
 });
 
 </script>
