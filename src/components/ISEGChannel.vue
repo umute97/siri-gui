@@ -6,16 +6,16 @@
         </header>
         <section class="iseg-values">
             <section class="current-values">
-                <label>Current</label>
+                <label>Current (A)</label>
                 <input type="number" disabled v-model="props.current">
             </section>
             <section class="voltage-values">
-                <label>Voltage</label>
+                <label>Voltage (V)</label>
                 <input type="number" disabled v-model="props.voltage">
             </section>
         </section>
         <section class="voltage">
-            <label>Set Voltage</label>
+            <label>Set Voltage (V)</label>
             <form>
                 <input type="number" v-model.number="setVoltage">
                 <input class="voltage-submit" type="submit" value="Set" @click.prevent="$emit('setISEGChannelVoltage', Number(setVoltage.toFixed(2)), props.channel);">

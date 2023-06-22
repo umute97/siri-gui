@@ -48,6 +48,7 @@ onUnmounted(() => {
 
 .card header {
     font-size: 1.3rem;
+    margin-bottom: 1rem;
 }
 
 .card section {
