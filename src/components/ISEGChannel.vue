@@ -1,9 +1,9 @@
 <template>
     <article>
         <header>
-            <CustomCheckbox @click.prevent="$emit('toggleISEGPolarity', props.channel)" :checked="props.polarity" :colors="['var(--red-500)', 'var(--blue-400)']"/>
+            <CustomCheckbox @click.prevent="$emit('toggleISEGPolarity', props.channel)" :checked="props.polarity" :colors="['var(--red-500)', 'var(--blue-400)']" :marks="['+', '-']" />
             <h1>Channel {{ props.channel }}</h1>
-            <CustomCheckbox @click.prevent="$emit('toggleISEGChannel', props.channel)" :checked="props.channelEnabled" :colors="['var(--primary-color)', 'transparent']"/>
+            <CustomCheckbox @click.prevent="$emit('toggleISEGChannel', props.channel)" :checked="props.channelEnabled" :colors="['var(--primary-color)', 'transparent']" :marks="['ON', 'OFF']"/>
         </header>
         <section class="fields">
             <section class="value">
@@ -84,34 +84,6 @@ article {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
-}
-
-.output {
-    background: var(--red-400);
-    box-shadow: 0 0 0.8rem 0.3rem var(--red-500);
-}
-
-.output:checked {
-    background: var(--primary-color);
-    box-shadow: 0 0 0.8rem 0.3rem var(--primary-color);
-}
-
-.polarity {
-    background: var(--blue-400);
-    box-shadow: 0 0 0.8rem 0.3rem var(--blue-500);
-}
-.polarity:checked {
-    background: var(--red-400);
-    box-shadow: 0 0 0.8rem 0.3rem var(--red-500);
-}
-
-.polarity::after {
-    content: "N";
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
 }
 
 header {
