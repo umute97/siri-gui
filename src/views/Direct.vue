@@ -2,20 +2,23 @@
     <article class="card">
         <header>iseg SHR4220</header>
         <section class="content">
-            <ISEGChannel v-for="channel in 4" :channel="channel - 1" :channel-enabled="isegChannelsEnabled[channel - 1]" :current="isegCurrents[channel - 1]" :voltage="isegVoltages[channel - 1]"
-                @toggleISEGChannel="toggleISEGChannel" @setISEGChannelVoltage="setISEGChannelVoltage" />
+            <ISEGChannel v-for="channel in 4" :channel="channel - 1" :channel-enabled="isegChannelsEnabled[channel - 1]"
+                :current="isegCurrents[channel - 1]" :voltage="isegVoltages[channel - 1]"
+                :polarity="isegPolarities[channel - 1]" @toggleISEGChannel="toggleISEGChannel"
+                @setISEGChannelVoltage="setISEGChannelVoltage" @setISEGChannelCompliance="setISEGChannelCompliance" @toggleISEGPolarity="toggleISEGChannelPolarity(channel - 1)"/>
         </section>
     </article>
 </template>
 
 <script lang="ts" setup>
 import { defineComponent, onMounted, onUnmounted, ref } from 'vue';
-import { toggleISEGChannel, setISEGChannelVoltage, getISEGOutputs, getISEGCurrents, getISEGVoltages } from '@/util/networking';
+import { toggleISEGChannel, setISEGChannelVoltage, getISEGOutputs, getISEGCurrents, getISEGVoltages, setISEGChannelCompliance, getISEGPolarities, toggleISEGChannelPolarity } from '@/util/networking';
 import ISEGChannel from '@/components/ISEGChannel.vue';
 
 const isegChannelsEnabled = ref([false, false, false, false]);
 const isegCurrents = ref([0, 0, 0, 0]);
 const isegVoltages = ref([0, 0, 0, 0]);
+const isegPolarities = ref([true, true, true, true]);
 let isegTimer: number = -1;
 
 defineComponent({
@@ -29,6 +32,7 @@ onMounted(() => {
         isegChannelsEnabled.value = await getISEGOutputs();
         isegCurrents.value = await getISEGCurrents();
         isegVoltages.value = await getISEGVoltages();
+        isegPolarities.value = await getISEGPolarities();
     }, 1000);
 });
 

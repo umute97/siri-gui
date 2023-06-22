@@ -201,3 +201,35 @@ export async function getISEGCurrents(): Promise<number[]> {
         return [0, 0, 0, 0];
     }
 }
+
+export async function setISEGChannelCompliance(compliance: number, channel: number): Promise<void> {
+    const payload = { device: "high_voltage_device", command: "set_current_compliance", arguments: [compliance, channel] }
+    const data = packData("post", "devicemanager", "/", payload)
+    try {
+        await axios.post(`${addresses.getFullGatewayAddress}`, data);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export async function toggleISEGChannelPolarity(channel: number): Promise<void> {
+    const payload = { device: "high_voltage_device", command: "toggle_polarity", arguments: channel }
+    const data = packData("post", "devicemanager", "/", payload)
+    try {
+        await axios.post(`${addresses.getFullGatewayAddress}`, data);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export async function getISEGPolarities(): Promise<boolean[]> {
+    const payload = { device: "high_voltage_device", command: "get_all_polarities", arguments: null }
+    const data = packData("post", "devicemanager", "/", payload)
+    try {
+        const response = await axios.post(`${addresses.getFullGatewayAddress}`, data);
+        return response.data.result.map((polarity: number) => polarity === 1);
+    } catch (error) {
+        console.log(error);
+        return [false, false, false, false];
+    }
+}
