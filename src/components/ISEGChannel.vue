@@ -1,8 +1,8 @@
 <template>
     <article>
         <header>
-            <CustomCheckbox @click.prevent="$emit('toggleISEGPolarity', props.channel)" :checked="props.polarity" :colors="['var(--red-500)', 'var(--blue-400)']" :marks="['+', '-']" />
             <h1>Channel {{ props.channel }}</h1>
+            <CustomCheckbox @click.prevent="$emit('toggleISEGPolarity', props.channel)" :checked="props.polarity" :colors="['var(--red-500)', 'var(--blue-400)']" :marks="['+', '-']" />
             <CustomCheckbox @click.prevent="$emit('toggleISEGChannel', props.channel)" :checked="props.channelEnabled" :colors="['var(--primary-color)', 'transparent']" :marks="['ON', 'OFF']"/>
         </header>
         <section class="fields">
