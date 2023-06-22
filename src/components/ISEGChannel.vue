@@ -17,17 +17,17 @@
             <section class="set">
                 <label>Compliance (A)</label>
                 <form>
-                    <input type="number" v-model.number="currentCompliance">
+                    <input type="number" v-model.number="localCompliance">
                     <input class="iseg-submit" type="submit" value="Set"
-                        @click.prevent="$emit('setISEGChannelCompliance', Number(currentCompliance.toExponential(2)), props.channel);">
+                        @click.prevent="$emit('setISEGChannelCompliance', Number(localCompliance.toExponential(2)), props.channel);">
                 </form>
             </section>
             <section class="set">
                 <label>Set Voltage (V)</label>
                 <form>
-                    <input type="number" v-model.number="setVoltage">
+                    <input type="number" v-model.number="localSetVoltage">
                     <input class="iseg-submit" type="submit" value="Set"
-                        @click.prevent="$emit('setISEGChannelVoltage', Number(setVoltage.toFixed(2)), props.channel);">
+                        @click.prevent="$emit('setISEGChannelVoltage', Number(localSetVoltage.toFixed(2)), props.channel);">
                 </form>
             </section>
         </section>
@@ -35,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, watch } from 'vue';
 import CustomCheckbox from './CustomCheckbox.vue';
 
 defineComponent({
@@ -57,6 +57,14 @@ const props = defineProps({
         type: Number,
         required: true,
     },
+    compliance: {
+        type: Number,
+        required: true,
+    },
+    setVoltage: {
+        type: Number,
+        required: true,
+    },
     voltage: {
         type: Number,
         required: true,
@@ -66,10 +74,18 @@ const props = defineProps({
         required: true,
     },
 });
-const setVoltage = ref(0);
-const currentCompliance = ref(0);
-</script>
 
+const localCompliance = ref(props.compliance);
+const localSetVoltage = ref(props.setVoltage);
+
+watch(() => props.compliance, (value) => {
+    localCompliance.value = value;
+});
+
+watch(() => props.setVoltage, (value) => {
+    localSetVoltage.value = value;
+});
+</script>
 <style scoped>
 article {
     display: flex;

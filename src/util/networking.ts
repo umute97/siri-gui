@@ -156,7 +156,31 @@ export async function setISEGChannelVoltage(voltage: number, channel: number): P
     }
 }
 
-export async function toggleISEGChannel(channel: number): Promise<void> {
+export async function getISEGChannelSetVoltage(channel: number): Promise<number> {
+    const payload = { device: "high_voltage_device", command: "get_voltage", arguments: channel }
+    const data = packData("post", "devicemanager", "/", payload)
+    try {
+        const response = await axios.post(`${addresses.getFullGatewayAddress}`, data);
+        return response.data.result;
+    } catch (error) {
+        console.log(error);
+        return 0;
+    }
+}
+
+export async function getISEGSetVoltages(): Promise<number[]> {
+    const payload = { device: "high_voltage_device", command: "get_all_voltages", arguments: null }
+    const data = packData("post", "devicemanager", "/", payload)
+    try {
+        const response = await axios.post(`${addresses.getFullGatewayAddress}`, data);
+        return response.data.result;
+    } catch (error) {
+        console.log(error);
+        return [0, 0, 0, 0];
+    }
+}
+
+export async function toggleISEGChannelOutput(channel: number): Promise<void> {
     const payload = { device: "high_voltage_device", command: "toggle_output", arguments: channel }
     const data = packData("post", "devicemanager", "/", payload)
     try {
@@ -178,8 +202,8 @@ export async function getISEGOutputs(): Promise<boolean[]> {
     }
 }
 
-export async function getISEGVoltages(): Promise<number[]> {
-    const payload = { device: "high_voltage_device", command: "get_all_voltages", arguments: null }
+export async function readISEGVoltages(): Promise<number[]> {
+    const payload = { device: "high_voltage_device", command: "read_all_voltages", arguments: null }
     const data = packData("post", "devicemanager", "/", payload)
     try {
         const response = await axios.post(`${addresses.getFullGatewayAddress}`, data);
@@ -190,8 +214,8 @@ export async function getISEGVoltages(): Promise<number[]> {
     }
 }
 
-export async function getISEGCurrents(): Promise<number[]> {
-    const payload = { device: "high_voltage_device", command: "get_all_currents", arguments: null }
+export async function readISEGCurrents(): Promise<number[]> {
+    const payload = { device: "high_voltage_device", command: "read_all_currents", arguments: null }
     const data = packData("post", "devicemanager", "/", payload)
     try {
         const response = await axios.post(`${addresses.getFullGatewayAddress}`, data);
@@ -209,6 +233,18 @@ export async function setISEGChannelCompliance(compliance: number, channel: numb
         await axios.post(`${addresses.getFullGatewayAddress}`, data);
     } catch (error) {
         console.log(error);
+    }
+}
+
+export async function getISEGCompliances(): Promise<number[]> {
+    const payload = { device: "high_voltage_device", command: "get_all_current_compliances", arguments: null }
+    const data = packData("post", "devicemanager", "/", payload)
+    try {
+        const response = await axios.post(`${addresses.getFullGatewayAddress}`, data);
+        return response.data.result;
+    } catch (error) {
+        console.log(error);
+        return [0, 0, 0, 0];
     }
 }
 

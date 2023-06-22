@@ -3,8 +3,8 @@
         <header>iseg SHR4220</header>
         <section class="content">
             <ISEGChannel v-for="channel in 4" :channel="channel - 1" :channel-enabled="isegChannelsEnabled[channel - 1]"
-                :current="isegCurrents[channel - 1]" :voltage="isegVoltages[channel - 1]"
-                :polarity="isegPolarities[channel - 1]" @toggleISEGChannel="toggleISEGChannel"
+                :current="isegCurrents[channel - 1]" :compliance="isegCompliances[channel - 1]" :voltage="isegVoltages[channel - 1]" :set-voltage="isegSetVoltages[channel - 1]"
+                :polarity="isegPolarities[channel - 1]" @toggleISEGChannel="toggleISEGChannelOutput"
                 @setISEGChannelVoltage="setISEGChannelVoltage" @setISEGChannelCompliance="setISEGChannelCompliance" @toggleISEGPolarity="toggleISEGChannelPolarity(channel - 1)"/>
         </section>
     </article>
@@ -12,13 +12,15 @@
 
 <script lang="ts" setup>
 import { defineComponent, onMounted, onUnmounted, ref } from 'vue';
-import { toggleISEGChannel, setISEGChannelVoltage, getISEGOutputs, getISEGCurrents, getISEGVoltages, setISEGChannelCompliance, getISEGPolarities, toggleISEGChannelPolarity } from '@/util/networking';
+import { toggleISEGChannelOutput, setISEGChannelVoltage, getISEGOutputs, readISEGCurrents, readISEGVoltages, setISEGChannelCompliance, getISEGPolarities, toggleISEGChannelPolarity, getISEGSetVoltages, getISEGCompliances } from '@/util/networking';
 import ISEGChannel from '@/components/ISEGChannel.vue';
 
 const isegChannelsEnabled = ref([false, false, false, false]);
 const isegCurrents = ref([0, 0, 0, 0]);
 const isegVoltages = ref([0, 0, 0, 0]);
 const isegPolarities = ref([true, true, true, true]);
+const isegSetVoltages = ref([0, 0, 0, 0]);
+const isegCompliances = ref([0, 0, 0, 0]);
 let isegTimer: number = -1;
 
 defineComponent({
@@ -27,11 +29,14 @@ defineComponent({
     },
 });
 
-onMounted(() => {
+onMounted(async () => {
+    isegSetVoltages.value = await getISEGSetVoltages();
+    isegCompliances.value = await getISEGCompliances();
+
     isegTimer = window.setInterval(async () => {
         isegChannelsEnabled.value = await getISEGOutputs();
-        isegCurrents.value = await getISEGCurrents();
-        isegVoltages.value = await getISEGVoltages();
+        isegCurrents.value = await readISEGCurrents();
+        isegVoltages.value = await readISEGVoltages();
         isegPolarities.value = await getISEGPolarities();
     }, 1000);
 });
