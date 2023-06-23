@@ -157,7 +157,7 @@ export async function setISEGChannelVoltage(voltage: number, channel: number): P
 }
 
 export async function getISEGChannelSetVoltage(channel: number): Promise<number> {
-    const payload = { device: "high_voltage_device", command: "get_voltage", arguments: channel }
+    const payload = { device: "high_voltage_device", command: "get_set_voltage", arguments: channel }
     const data = packData("post", "devicemanager", "/", payload)
     try {
         const response = await axios.post(`${addresses.getFullGatewayAddress}`, data);
@@ -169,7 +169,7 @@ export async function getISEGChannelSetVoltage(channel: number): Promise<number>
 }
 
 export async function getISEGSetVoltages(): Promise<number[]> {
-    const payload = { device: "high_voltage_device", command: "get_all_voltages", arguments: null }
+    const payload = { device: "high_voltage_device", command: "get_all_set_voltages", arguments: null }
     const data = packData("post", "devicemanager", "/", payload)
     try {
         const response = await axios.post(`${addresses.getFullGatewayAddress}`, data);
