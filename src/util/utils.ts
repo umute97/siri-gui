@@ -23,17 +23,27 @@ export function pick(obj: object, ...props: any[]): Header {
     }, {})
 }
 
-export function makeIVMeasDict(start: number, stop: number, step: number) {
+export function makeIVMeasDict(start: number, stop: number, step: number, compliance: number, wait_before: number, wait_after: number) {
     return {
         IV: {
             global: {
                 high_voltage: {
-                    start: start,
-                    stop: stop,
-                    step: step,
+                    start,
+                    stop,
+                    step
+                },
+                compliance: {
+                    start: compliance,
                 }
             },
-            I_tot: {}
+            I_tot: {
+                wait_before: {
+                    start: wait_before,
+                },
+                wait_after: {
+                    start: wait_after,
+                }
+            }
         }
     }
 }

@@ -6,13 +6,17 @@
                 <div id="annealing-header">Annealing</div>
             </template>
             <template #parameters>
-                <form>
-                    <label for="annealing-temperature">Temperature</label>
-                    <input name="annealing-temperature" v-model.number="annealingTemperature" min="0" max="60" step="1"
-                        placeholder="temperature (in C°)">
-                    <label for="annealing-duration">Duration</label>
-                    <input name="annealing-duration" v-model.number="annealingDuration" min="0" max="100" step="1"
-                        placeholder="duration (in min)">
+                <form id="annealing-form">
+                    <section class="param-field">
+                        <label for="annealing-temperature">Temperature (C°)</label>
+                        <input name="annealing-temperature" v-model.number="annealingTemperature" min="0" max="60" step="1"
+                            placeholder="temperature (in C°)">
+                    </section>
+                    <section class="param-field">
+                        <label for="annealing-duration">Duration (min)</label>
+                        <input name="annealing-duration" v-model.number="annealingDuration" min="0" max="100" step="1"
+                            placeholder="duration (in min)">
+                    </section>
                 </form>
             </template>
             <template #content>
@@ -25,16 +29,34 @@
                 <div id="iv-header">IV</div>
             </template>
             <template #parameters>
-                <form>
-                    <label for="iv-voltage-start">Start Voltage</label>
-                    <input name="iv-voltage-start" v-model.number="ivStart" min="-1000" max="1000" step="1"
-                        placeholder="start voltage (in V)">
-                    <label for="iv-voltage-stop">Stop Voltage</label>
-                    <input name="iv-voltage-stop" v-model.number="ivStop" min="-1000" max="1000" step="1"
-                        placeholder="stop voltage (in V)">
-                    <label for="iv-voltage-step">Voltage Step</label>
-                    <input name="iv-voltage-step" v-model.number="ivStep" min="-1000" max="1000" step="1"
-                        placeholder="step voltage (in V)">
+                <form id="iv-params">
+                    <section class="param-field">
+                        <label for="iv-voltage-start">Start Voltage (V)</label>
+                        <input name="iv-voltage-start" v-model.number="ivStart" min="-1000" max="1000" step="1"
+                            placeholder="start voltage (in V)">
+                    </section>
+                    <section class="param-field">
+                        <label for="iv-voltage-stop">Stop Voltage (V)</label>
+                        <input name="iv-voltage-stop" v-model.number="ivStop" min="-1000" max="1000" step="1"
+                            placeholder="stop voltage (in V)">
+                    </section>
+                    <section class="param-field">
+                        <label for="iv-voltage-step">Voltage Step (V)</label>
+                        <input name="iv-voltage-step" v-model.number="ivStep" min="-1000" max="1000" step="1"
+                            placeholder="step voltage (in V)">
+                    </section>
+                    <section class="param-field">
+                        <label for="iv-compliance">Compliance (A)</label>
+                        <input name="iv-compliance" v-model.number="compliance" placeholder="compliance (in A)">
+                    </section>
+                    <section class="param-field">
+                        <label for="iv-wait-before">Wait Before (s)</label>
+                        <input name="iv-wait-before" v-model.number="waitBefore" placeholder="wait before (in s)">
+                    </section>
+                    <section class="param-field">
+                        <label for="iv-wait-after">Wait After (s)</label>
+                        <input name="iv-wait-after" v-model.number="waitAfter" placeholder="wait after (in s)">
+                    </section>
                 </form>
             </template>
             <template #content>
@@ -47,23 +69,33 @@
                 <div id="alibava-header">Charge Collection</div>
             </template>
             <template #parameters>
-                <form>
-                    <label for="alibava-voltage-start">Start Voltage</label>
-                    <input name="alibava-voltage-start" v-model.number="alibavaVStart" min="-1000" max="1000" step="1"
-                        placeholder="start voltage (in V)">
-                    <label for="alibava-voltage-stop">Stop Voltage</label>
-                    <input name="alibava-voltage-stop" v-model.number="alibavaVStop" min="-1000" max="1000" step="1"
-                        placeholder="stop voltage (in V)">
-                    <label for="alibava-voltage-step">Voltage Step</label>
-                    <input name="alibava-voltage-step" v-model.number="alibavaVStep" min="-1000" max="1000" step="1"
-                        placeholder="step voltage (in V)">
-                    <label for="alibava-events">No. of events</label>
-                    <input name="alibava-events" v-model.number="events" min="0" step="1000" placeholder="no. of events">
+                <form id="alibava-params">
+                    <section class="param-field">
+                        <label for="alibava-voltage-start">Start Voltage (V)</label>
+                        <input name="alibava-voltage-start" v-model.number="alibavaVStart" min="-1000" max="1000" step="1"
+                            placeholder="start voltage (in V)">
+                    </section>
+                    <section class="param-field">
+                        <label for="alibava-voltage-stop">Stop Voltage (V)</label>
+                        <input name="alibava-voltage-stop" v-model.number="alibavaVStop" min="-1000" max="1000" step="1"
+                            placeholder="stop voltage (in V)">
+                    </section>
+                    <section class="param-field">
+                        <label for="alibava-voltage-step">Voltage Step (V)</label>
+                        <input name="alibava-voltage-step" v-model.number="alibavaVStep" min="-1000" max="1000" step="1"
+                            placeholder="step voltage (in V)">
+                    </section>
+                    <section class="param-field">
+                        <label for="alibava-events">No. of events</label>
+                        <input name="alibava-events" v-model.number="events" min="0" step="1000"
+                            placeholder="no. of events">
+                    </section>
                 </form>
             </template>
             <template #content>
                 <div class="progressbar-wrapper">
-                    <ProgressBar :current-step="measurementStore.current_measurement_index" :max-steps="measurementStore.max_measurement_index" :height="'2rem'"></ProgressBar>
+                    <ProgressBar :current-step="measurementStore.current_measurement_index"
+                        :max-steps="measurementStore.max_measurement_index" :height="'2rem'"></ProgressBar>
                 </div>
             </template>
         </MeasureCard>
@@ -191,6 +223,9 @@ const annealingDuration: Ref<number> = ref(20);
 const ivStart: Ref<number> = ref(0);
 const ivStop: Ref<number> = ref(-1000);
 const ivStep: Ref<number> = ref(-10);
+const compliance: Ref<number> = ref(1e-6);
+const waitBefore: Ref<number> = ref(1);
+const waitAfter: Ref<number> = ref(1);
 const alibavaVStart: Ref<number> = ref(-300);
 const alibavaVStop: Ref<number> = ref(-900);
 const alibavaVStep: Ref<number> = ref(-100);
@@ -251,7 +286,7 @@ async function startMeasurement(measurementType: string) {
         case "iv":
             if (!checkForm([ivStart, ivStop, ivStep]))
                 return;
-            measDict = makeIVMeasDict(ivStart.value, ivStop.value, ivStep.value);
+            measDict = makeIVMeasDict(ivStart.value, ivStop.value, ivStep.value, compliance.value, waitBefore.value, waitAfter.value);
             break;
         case "annealing":
             if (!checkForm([annealingTemperature, annealingDuration]))
@@ -284,7 +319,7 @@ onMounted(() => {
     annealingHeader = document.getElementById('annealing-header') as HTMLDivElement;
     ivHeader = document.getElementById('iv-header') as HTMLDivElement;
     alibavaHeader = document.getElementById('alibava-header') as HTMLDivElement;
-    headers = {'Annealing': annealingHeader, 'IV': ivHeader, 'FullRun': alibavaHeader};
+    headers = { 'Annealing': annealingHeader, 'IV': ivHeader, 'FullRun': alibavaHeader };
 
     backendStatusTimer = window.setInterval(async () => {
         let data = packData("get", "measurement", "/measurement_dict", null);
@@ -341,12 +376,34 @@ label {
     color: var(--primary-color);
 }
 
-form {
+#annealing-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 1rem;
+    align-items: center;
+}
+
+#iv-params,
+#alibava-params {
+    width: 80%;
+    display: grid;
+    gap: 1rem;
+}
+
+#iv-params {
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+#alibava-params {
+    grid-template-columns: 1fr 1fr;
+}
+
+.param-field {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    width: 60%;
 }
 
 input {

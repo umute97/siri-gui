@@ -32,7 +32,7 @@ article {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     flex: 1;
     gap: 2rem;
     border: 1px solid black;
