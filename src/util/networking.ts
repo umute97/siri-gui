@@ -1,7 +1,7 @@
-import { packData, pick } from './utils';
-import axios from 'axios';
 import { useAddressesStore, useHeaderStore, useMeasurementStore, useTemperatureStore } from '@/stores/stores';
+import axios from 'axios';
 import type { Header, MonitorResponse, PayloadObject, ResponseData, StableStatus } from './types';
+import { packData, pick } from './utils';
 
 const addresses = useAddressesStore();
 const measurementStore = useMeasurementStore();
@@ -85,7 +85,7 @@ export async function getTemperatures(): Promise<MonitorResponse> {
 }
 
 export async function getDewpoint(): Promise<number> {
-    const payload = { "device": "dewpointcontroller", "command": "get_dew_point"};
+    const payload = { "device": "dewpointcontroller", "command": "get_dew_point" };
     const data = packData("post", "dewpointcontroller", "/", payload)
     try {
         const response = await axios.post(`${addresses.getFullGatewayAddress}`, data);
@@ -267,5 +267,16 @@ export async function getISEGPolarities(): Promise<boolean[]> {
     } catch (error) {
         console.log(error);
         return [false, false, false, false];
+    }
+}
+
+export async function sendDeviceManagerCommand(device: string, command: string, args: string | string[] | null): Promise<object | string | number | void> {
+    const payload = { device, command, arguments: args }
+    const data = packData("post", "devicemanager", "/", payload)
+    try {
+        const response = await axios.post(`${addresses.getFullGatewayAddress}`, data);
+        return response.data.result;
+    } catch (error) {
+        console.log(error);
     }
 }
