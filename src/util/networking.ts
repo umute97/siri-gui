@@ -270,7 +270,7 @@ export async function getISEGPolarities(): Promise<boolean[]> {
     }
 }
 
-export async function sendDeviceManagerCommand(device: string, command: string, args: string | string[] | null): Promise<object | string | number | void> {
+export async function sendDeviceManagerCommand(device: string, command: string, args: string | string[] | null): Promise<string | undefined> {
     const payload = { device, command, arguments: args }
     const data = packData("post", "devicemanager", "/", payload)
     try {
